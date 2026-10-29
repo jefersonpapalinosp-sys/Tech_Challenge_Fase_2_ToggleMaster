@@ -1,0 +1,108 @@
+name: togglemaster-aws
+
+# Este Compose usa somente serviços gerenciados da AWS para dados.
+# Execute-o em uma máquina com rota para a VPC vpc-0ecf1861ef9b39911
+# (por exemplo, uma EC2 na VPC). Os RDS e o ElastiCache não são públicos.
+services:
+  auth-service:
+    image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/auth-service:v1
+    pull_policy: always
+    environment:
+      PORT: "8001"
+      DATABASE_URL: ${AUTH_DATABASE_URL:?Defina AUTH_DATABASE_URL em .env.aws}
+      MASTER_KEY: ${MASTER_KEY:?Defina MASTER_KEY em .env.aws}
+    ports:
+      - "${AUTH_PORT:-8001}:8001"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+
+  flag-service:
+    image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/flag-service:v1
+    pull_policy: always
+    environment:
+      PORT: "8002"
+      DATABASE_URL: ${FLAGS_DATABASE_URL:?Defina FLAGS_DATABASE_URL em .env.aws}
+      AUTH_SERVICE_URL: http://auth-service:8001
+    ports:
+      - "${FLAG_PORT:-8002}:8002"
+    depends_on:
+      auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+
+  targeting-service:
+    image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/targeting-service:v1
+    pull_policy: always
+    environment:
+      PORT: "8003"
+      DATABASE_URL: ${TARGETING_DATABASE_URL:?Defina TARGETING_DATABASE_URL em .env.aws}
+      AUTH_SERVICE_URL: http://auth-service:8001
+    ports:
+      - "${TARGETING_PORT:-8003}:8003"
+    depends_on:
+      auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+
+  evaluation-service:
+    image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/evaluation-service:v3
+    pull_policy: always
+    environment:
+      PORT: "8004"
+      REDIS_URL: ${REDIS_URL:?Defina REDIS_URL em .env.aws}
+      REDIS_CLUSTER_MODE: "true"
+      FLAG_SERVICE_URL: http://flag-service:8002
+      TARGETING_SERVICE_URL: http://targeting-service:8003
+      SERVICE_API_KEY: ${SERVICE_API_KEY:?Defina SERVICE_API_KEY em .env.aws}
+      AWS_REGION: us-east-1
+      AWS_SQS_URL: https://sqs.us-east-1.amazonaws.com/058264096738/evaluation-analytics-queue
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN:-}
+    ports:
+      - "${EVALUATION_PORT:-8004}:8004"
+    depends_on:
+      flag-service:
+        condition: service_healthy
+      targeting-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8004/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+
+  analytics-service:
+    image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/analytics-service:v1
+    pull_policy: always
+    environment:
+      PORT: "8005"
+      AWS_REGION: us-east-1
+      AWS_SQS_URL: https://sqs.us-east-1.amazonaws.com/058264096738/evaluation-analytics-queue
+      AWS_DYNAMODB_TABLE: ToggleMasterAnalytics
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN:-}
+    ports:
+      - "${ANALYTICS_PORT:-8005}:8005"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8005/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped

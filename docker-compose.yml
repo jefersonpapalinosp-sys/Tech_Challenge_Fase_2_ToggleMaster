@@ -1,0 +1,201 @@
+name: togglemaster-fase2
+
+services:
+  auth-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-toggle}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-toggle_local}
+      POSTGRES_DB: auth_db
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+      - ./auth-service/db/init.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./infra/postgres-auth/02-seed-local.sql:/docker-entrypoint-initdb.d/02-seed-local.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U toggle -d auth_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+
+  apps-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-toggle}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-toggle_local}
+      POSTGRES_DB: postgres
+    volumes:
+      - apps-db-data:/var/lib/postgresql/data
+      - ./infra/postgres-apps/01-init-databases.sql:/docker-entrypoint-initdb.d/01-init-databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U toggle -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.2-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+
+  aws-local:
+    image: localstack/localstack:3.8.1
+    environment:
+      SERVICES: sqs,dynamodb
+      AWS_DEFAULT_REGION: us-east-1
+      PERSISTENCE: "1"
+      DEBUG: "0"
+    ports:
+      - "4566:4566"
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - ./infra/localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "awslocal sqs get-queue-url --queue-name togglemaster-events >/dev/null 2>&1 && awslocal dynamodb describe-table --table-name ToggleMasterAnalytics >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  auth-service:
+    image: togglemaster/auth-service:local
+    build:
+      context: ./auth-service
+    init: true
+    environment:
+      PORT: "8001"
+      DATABASE_URL: postgres://${POSTGRES_USER:-toggle}:${POSTGRES_PASSWORD:-toggle_local}@auth-db:5432/auth_db?sslmode=disable
+      MASTER_KEY: ${MASTER_KEY:-admin-secreto-123}
+    ports:
+      - "${AUTH_PORT:-18001}:8001"
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8001/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: on-failure
+
+  flag-service:
+    image: togglemaster/flag-service:local
+    build:
+      context: ./flag-service
+    init: true
+    environment:
+      PORT: "8002"
+      DATABASE_URL: postgres://${POSTGRES_USER:-toggle}:${POSTGRES_PASSWORD:-toggle_local}@apps-db:5432/flags_db
+      AUTH_SERVICE_URL: http://auth-service:8001
+    ports:
+      - "${FLAG_PORT:-18002}:8002"
+    depends_on:
+      apps-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: on-failure
+
+  targeting-service:
+    image: togglemaster/targeting-service:local
+    build:
+      context: ./targeting-service
+    init: true
+    environment:
+      PORT: "8003"
+      DATABASE_URL: postgres://${POSTGRES_USER:-toggle}:${POSTGRES_PASSWORD:-toggle_local}@apps-db:5432/targeting_db
+      AUTH_SERVICE_URL: http://auth-service:8001
+    ports:
+      - "${TARGETING_PORT:-18003}:8003"
+    depends_on:
+      apps-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: on-failure
+
+  evaluation-service:
+    image: togglemaster/evaluation-service:local
+    build:
+      context: ./evaluation-service
+    init: true
+    environment:
+      PORT: "8004"
+      REDIS_URL: redis://redis:6379
+      FLAG_SERVICE_URL: http://flag-service:8002
+      TARGETING_SERVICE_URL: http://targeting-service:8003
+      SERVICE_API_KEY: ${SERVICE_API_KEY:-tm_key_local_evaluation_service_dev_only}
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_EC2_METADATA_DISABLED: "true"
+      AWS_SQS_URL: http://aws-local:4566/000000000000/togglemaster-events
+      AWS_SQS_ENDPOINT_URL: http://aws-local:4566
+    ports:
+      - "${EVALUATION_PORT:-18004}:8004"
+    depends_on:
+      redis:
+        condition: service_healthy
+      flag-service:
+        condition: service_healthy
+      targeting-service:
+        condition: service_healthy
+      aws-local:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8004/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: on-failure
+
+  analytics-service:
+    image: togglemaster/analytics-service:local
+    build:
+      context: ./analytics-service
+    init: true
+    environment:
+      PORT: "8005"
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_EC2_METADATA_DISABLED: "true"
+      AWS_SQS_URL: http://aws-local:4566/000000000000/togglemaster-events
+      AWS_SQS_ENDPOINT_URL: http://aws-local:4566
+      AWS_DYNAMODB_TABLE: ToggleMasterAnalytics
+      AWS_DYNAMODB_ENDPOINT_URL: http://aws-local:4566
+    ports:
+      - "${ANALYTICS_PORT:-18005}:8005"
+    depends_on:
+      aws-local:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8005/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: on-failure
+
+volumes:
+  auth-db-data:
+  apps-db-data:
+  redis-data:
+  localstack-data:

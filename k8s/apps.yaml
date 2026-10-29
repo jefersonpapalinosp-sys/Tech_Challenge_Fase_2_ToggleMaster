@@ -1,0 +1,257 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: auth-service }
+  template:
+    metadata:
+      labels: { app: auth-service }
+    spec:
+      containers:
+        - name: auth-service
+          image: togglemaster/auth-service:local
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8001 }]
+          env:
+            - { name: PORT, value: "8001" }
+            - name: DATABASE_URL
+              valueFrom: { secretKeyRef: { name: togglemaster-secrets, key: AUTH_DATABASE_URL } }
+            - name: MASTER_KEY
+              valueFrom: { secretKeyRef: { name: togglemaster-secrets, key: MASTER_KEY } }
+          startupProbe: &authProbe
+            httpGet: { path: /health, port: 8001 }
+            periodSeconds: 3
+            failureThreshold: 30
+          readinessProbe: *authProbe
+          livenessProbe:
+            httpGet: { path: /health, port: 8001 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources: &goResources
+            requests: { cpu: 100m, memory: 64Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+          securityContext: &appSecurity
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: auth-service }
+spec:
+  selector: { app: auth-service }
+  ports: [{ name: http, port: 8001, targetPort: 8001 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: flag-service }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: flag-service }
+  template:
+    metadata:
+      labels: { app: flag-service }
+    spec:
+      containers:
+        - name: flag-service
+          image: togglemaster/flag-service:local
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8002 }]
+          env:
+            - { name: PORT, value: "8002" }
+            - name: DATABASE_URL
+              valueFrom: { secretKeyRef: { name: togglemaster-secrets, key: FLAGS_DATABASE_URL } }
+            - name: AUTH_SERVICE_URL
+              valueFrom: { configMapKeyRef: { name: togglemaster-config, key: AUTH_SERVICE_URL } }
+          startupProbe: &flagProbe
+            httpGet: { path: /health, port: 8002 }
+            periodSeconds: 3
+            failureThreshold: 30
+          readinessProbe: *flagProbe
+          livenessProbe:
+            httpGet: { path: /health, port: 8002 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources: &pythonResources
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 384Mi }
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts: [{ name: tmp, mountPath: /tmp }]
+      volumes: [{ name: tmp, emptyDir: {} }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: flag-service }
+spec:
+  selector: { app: flag-service }
+  ports: [{ name: http, port: 8002, targetPort: 8002 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: targeting-service }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: targeting-service }
+  template:
+    metadata:
+      labels: { app: targeting-service }
+    spec:
+      containers:
+        - name: targeting-service
+          image: togglemaster/targeting-service:local
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8003 }]
+          env:
+            - { name: PORT, value: "8003" }
+            - name: DATABASE_URL
+              valueFrom: { secretKeyRef: { name: togglemaster-secrets, key: TARGETING_DATABASE_URL } }
+            - name: AUTH_SERVICE_URL
+              valueFrom: { configMapKeyRef: { name: togglemaster-config, key: AUTH_SERVICE_URL } }
+          startupProbe: &targetingProbe
+            httpGet: { path: /health, port: 8003 }
+            periodSeconds: 3
+            failureThreshold: 30
+          readinessProbe: *targetingProbe
+          livenessProbe:
+            httpGet: { path: /health, port: 8003 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 384Mi }
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts: [{ name: tmp, mountPath: /tmp }]
+      volumes: [{ name: tmp, emptyDir: {} }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: targeting-service }
+spec:
+  selector: { app: targeting-service }
+  ports: [{ name: http, port: 8003, targetPort: 8003 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: evaluation-service }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: evaluation-service }
+  template:
+    metadata:
+      labels: { app: evaluation-service }
+    spec:
+      containers:
+        - name: evaluation-service
+          image: togglemaster/evaluation-service:local
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8004 }]
+          env:
+            - { name: PORT, value: "8004" }
+            - name: SERVICE_API_KEY
+              valueFrom: { secretKeyRef: { name: togglemaster-secrets, key: SERVICE_API_KEY } }
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom: { secretKeyRef: { name: togglemaster-secrets, key: AWS_ACCESS_KEY_ID } }
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom: { secretKeyRef: { name: togglemaster-secrets, key: AWS_SECRET_ACCESS_KEY } }
+          envFrom:
+            - configMapRef: { name: togglemaster-config }
+          startupProbe: &evaluationProbe
+            httpGet: { path: /health, port: 8004 }
+            periodSeconds: 3
+            failureThreshold: 40
+          readinessProbe: *evaluationProbe
+          livenessProbe:
+            httpGet: { path: /health, port: 8004 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests: { cpu: 100m, memory: 64Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: evaluation-service }
+spec:
+  selector: { app: evaluation-service }
+  ports: [{ name: http, port: 8004, targetPort: 8004 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: analytics-service }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: analytics-service }
+  template:
+    metadata:
+      labels: { app: analytics-service }
+    spec:
+      containers:
+        - name: analytics-service
+          image: togglemaster/analytics-service:local
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8005 }]
+          env:
+            - { name: PORT, value: "8005" }
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom: { secretKeyRef: { name: togglemaster-secrets, key: AWS_ACCESS_KEY_ID } }
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom: { secretKeyRef: { name: togglemaster-secrets, key: AWS_SECRET_ACCESS_KEY } }
+          envFrom:
+            - configMapRef: { name: togglemaster-config }
+          startupProbe: &analyticsProbe
+            httpGet: { path: /health, port: 8005 }
+            periodSeconds: 3
+            failureThreshold: 40
+          readinessProbe: *analyticsProbe
+          livenessProbe:
+            httpGet: { path: /health, port: 8005 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 384Mi }
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts: [{ name: tmp, mountPath: /tmp }]
+      volumes: [{ name: tmp, emptyDir: {} }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: analytics-service }
+spec:
+  selector: { app: analytics-service }
+  ports: [{ name: http, port: 8005, targetPort: 8005 }]

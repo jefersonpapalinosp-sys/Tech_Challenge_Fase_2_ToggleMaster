@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: analytics-config
+  namespace: analytics
+data:
+  PORT: "8005"
+  AWS_REGION: "us-east-1"
+  AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/058264096738/evaluation-analytics-queue"
+  AWS_DYNAMODB_TABLE: "ToggleMasterAnalytics"

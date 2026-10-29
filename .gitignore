@@ -1,0 +1,32 @@
+.env*
+!.env.example
+!.env.aws.example
+*.log
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.idea/
+.vscode/
+coverage/
+dist/
+tmp/
+
+# Credenciais e overrides locais
+k8s/secret.yaml
+k8s/secret-local.yaml
+docker-compose.override.yml
+
+# Chaves e certificados locais
+*.pem
+*.key
+*.p12
+*.pfx
+.aws/
+
+# Ferramentas locais baixadas pelos scripts
+tools/
+
+# Pacotes e documentos usados somente como referência local
+k8s-aws.zip
+docs/POSTECH - Tech Challenge - Fase 2.pdf
+docs/Tech_Challenge_Fase_1_ToggleMaster.pdf
