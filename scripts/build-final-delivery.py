@@ -17,11 +17,13 @@ OUT.mkdir(parents=True, exist_ok=True)
 STEM = 'Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL'
 REPO = 'https://github.com/jefersonpapalinosp-sys/Tech-challenge-grupo-2'
 REPO_CODE = REPO + '/tree/main/fase2'
+VIDEO = 'https://youtu.be/lcheHRVKTW8'
 LB = 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com'
 NAMES = ['Afonso Victoriano Franco', 'Cesar Augusto Ferreira Alves',
          'Jeferson Lima Papalino', 'Jonatas Ariel Nunes', 'Willian Felix Corrêa']
 RMS = {
     'Afonso Victoriano Franco': 'RM373563',
+    'Cesar Augusto Ferreira Alves': 'RM376614',
     'Jeferson Lima Papalino': 'RM376680',
     'Jonatas Ariel Nunes': 'RM376145',
     'Willian Felix Corrêa': 'RM372688',
@@ -47,16 +49,14 @@ PAGES = [
     p('Ambiente acadêmico AWS Academy — LAB 2. Conta 533267349027, região us-east-1. '
       'Este relatório descreve a implantação, as decisões técnicas e os resultados registrados nas evidências do projeto.'),
     h('Equipe'),
-    table(['Integrante', 'RM', 'Discord'], [[name, RMS.get(name, '[PREENCHER]'), DISCORD[name]] for name in NAMES]),
+    table(['Integrante', 'RM', 'Discord'], [[name, RMS[name], DISCORD[name]] for name in NAMES]),
     h('Links de entrega'),
     link('Repositório do projeto', REPO),
     link('Código da Fase 2', REPO_CODE),
-    p('Vídeo de demonstração: [INSERIR LINK DO VÍDEO]'),
-    p('Duração do vídeo exportado: 18:19'),
-    p('O vídeo editado foi conferido em 02/11/2026, por quadros de cada trecho e transcrição do áudio. '
-      'O link será acrescentado após a publicação.'),
-    note('Os RMs de quatro integrantes e os usernames do Discord dos cinco foram informados pela equipe. '
-         'Faltam o RM de Cesar Augusto Ferreira Alves e o link do vídeo; preencher antes do envio à FIAP.'),
+    link('Vídeo de demonstração', VIDEO),
+    p('Duração do vídeo publicado: 18:19'),
+    p('O vídeo editado foi conferido em 02/11/2026, por quadros de cada trecho e transcrição do áudio, '
+      'e publicado no YouTube como não listado: abre para quem tem o link.'),
     h('Referência e escopo'),
     p('Enunciado: POSTECH - Tech Challenge - Fase 2, 11 páginas, disponível em docs. '
       'A organização segue os cinco requisitos técnicos e os entregáveis das páginas 9–10.'),
@@ -345,8 +345,8 @@ PAGES = [
         ['Envio manual de SQS', 'Executado na gravação de 02/11: 6000 mensagens aceitas, identificadas pelo RunId video-hpa-20261102134256-40a000.'],
         ['Persistência DynamoDB', 'Scan com quatro itens de load-postman-fiap em 30/10 e 6000 eventos do RunId em 02/11.'],
         ['Arquitetura e decisões (p. 9)', 'Seção 1: propósitos de RDS, ElastiCache e DynamoDB. Seção 6: implementação do HPA analytics e justificativa da escolha frente ao KEDA.'],
-        ['Vídeo até 20 minutos', 'Arquivo editado com 18:19, conferido em 02/11; link a preencher após a publicação.'],
-        ['Identificação dos integrantes', 'Cinco nomes, quatro RMs e cinco usernames do Discord informados; falta o RM de Cesar.'],
+        ['Vídeo até 20 minutos', 'Publicado no YouTube com 18:19, conferido em 02/11; link em Links de entrega.'],
+        ['Identificação dos integrantes', 'Cinco nomes, RMs e usernames do Discord informados.'],
     ]),
     h('Limites da conclusão'),
     p('O relatório consolida a implementação e a evidência disponível. Não declara atendimento integral '
@@ -392,15 +392,15 @@ PAGES = [
     p('O arquivo apresentacao/08_COMANDOS_SOMENTE_PARTE_B.txt reúne a sequência da apresentação. '
       'Os trechos antigos com ForEach-Object -Parallel exigiam PowerShell 7 e foram retirados desta versão.'),
 ]),
-('11. Entrega e referências', 'Arquivos finais e campos reservados', [
+('11. Entrega e referências', 'Arquivos finais e conferência de envio', [
     p('A pasta apresentacao/entrega_final contém o relatório em Word, PDF e TXT, as evidências TXT, '
-      'os quadros do ensaio de 02/11 e instruções curtas de preenchimento. O Word é a versão editável. PDF ou TXT podem compor a entrega '
+      'os quadros do ensaio de 02/11 e instruções curtas de conferência. O Word é a versão editável. PDF ou TXT podem compor a entrega '
       'formal prevista no enunciado; o PDF deve ser exportado novamente se o Word for alterado.'),
-    h('Preencher antes de enviar'),
+    h('Conferir antes de enviar'),
     table(['Campo', 'Situação'], [
-        ['RM e Discord', 'Falta o RM de Cesar Augusto Ferreira Alves; o Discord dos cinco está preenchido.'],
-        ['Link do vídeo', 'A inserir após publicação; validar acesso pelo avaliador.'],
-        ['Duração final', '18:19 no arquivo conferido em 02/11; atualizar se o vídeo for editado de novo.'],
+        ['RM e Discord', 'Preenchidos para os cinco integrantes.'],
+        ['Link do vídeo', 'Publicado no YouTube como não listado; conferir o acesso em janela anônima.'],
+        ['Duração final', '18:19, igual no arquivo conferido em 02/11 e no vídeo publicado.'],
         ['Conteúdo demonstrado', 'Conferido em 02/11: envio manual SQS, escala do analytics e eventos do lote no DynamoDB.'],
         ['Scripts 04 e 05', 'Publicados em fase2/apresentacao/scripts, com os comandos do ensaio em COMANDOS_ANALYTICS_HPA.txt.'],
         ['Link do repositório', 'Destino do grupo definido como Tech-challenge-grupo-2; conferir acesso e conteúdo antes da submissão.'],
@@ -409,6 +409,7 @@ PAGES = [
     link('Repositório do grupo', REPO),
     link('Código-fonte da Fase 2', REPO_CODE),
     link('Histórico de publicações da Fase 2', REPO + '/commits/main/fase2'),
+    link('Vídeo de demonstração', VIDEO),
     p('docs/POSTECH - Tech Challenge - Fase 2.pdf — requisitos técnicos e entregáveis.'),
     p('docker-compose.yml e os cinco diretórios *-service/Dockerfile — construção e execução local.'),
     p('k8s-aws/ — implantação, configurações, Ingresses, ExternalSecrets e HPAs.'),
@@ -422,7 +423,8 @@ PAGES = [
       'tipo de Load Balancer e escalabilidade foram reconciliadas com as fontes atuais do projeto.'),
     p('A revisão de 02/11/2026 acrescentou o ensaio de analytics e a conferência do vídeo editado, '
       'e publicou o relatório, a conferência, as evidências e os scripts 04 e 05 em fase2. '
-      'A versão de 31/10 foi preservada na cópia local, em docs/historico.'),
+      'A versão de 31/10 foi preservada na cópia local, em docs/historico. '
+      'Os RMs, o Discord e o link do vídeo foram preenchidos na mesma data.'),
     p('A documentação não contém valores de credenciais. A redação do relatório não executou provisionamento, '
       'exclusão, carga ou mudanças de configuração na AWS. A carga de 02/11 foi executada na gravação, e o '
       'ajuste dos nós está descrito na seção 4.'),
@@ -551,7 +553,7 @@ def build_docx(destination):
     doc.core_properties.title = 'ToggleMaster — Relatório final de implantação AWS — LAB 2'
     doc.core_properties.subject = 'Tech Challenge Fase 2 — implantação e evidências datadas'
     doc.core_properties.author = '; '.join(NAMES)
-    doc.core_properties.comments = 'Revisão 02/11/2026. RM de Cesar e link do vídeo a preencher.'
+    doc.core_properties.comments = 'Revisão 02/11/2026. Equipe, repositório e vídeo preenchidos.'
     doc.save(destination)
 
 
@@ -609,11 +611,11 @@ A pasta evidencias contém 13 saídas datadas de AWS CLI/kubectl e o ensaio 14, 
 gravação. Nenhum desses arquivos contém credenciais.
 
 ANTES DE ENVIAR
-1. Preencher o RM de Cesar na capa do Word.
-2. Inserir o link do vídeo. Duração conferida: 18:19; atualizar se o vídeo for editado de novo.
+1. RMs e Discord dos cinco integrantes preenchidos na capa.
+2. Vídeo publicado: https://youtu.be/lcheHRVKTW8 (18:19, YouTube não listado).
 3. Conferir acesso ao vídeo e ao repositório pelo avaliador.
 4. Conteúdo do vídeo conferido em 02/11: envio manual SQS, escala de analytics e persistência.
-   Enviar ToggleMaster_Fase2_Video_Final_v6.mp4, a versão com o IP mascarado.
+   O vídeo publicado é a v6, com o IP administrativo mascarado.
 5. Após qualquer edição no Word, salvar/exportar novamente em PDF.
 
 O pacote não contém os arquivos de vídeo nem é um pacote para executar o projeto.

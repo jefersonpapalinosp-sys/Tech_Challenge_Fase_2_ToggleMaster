@@ -12,12 +12,12 @@
 | Integrante | RM | Discord |
 |---|---|---|
 | Afonso Victoriano Franco | RM373563 | afonso3254 |
-| Cesar Augusto Ferreira Alves | **PENDENTE — informar RM** | cesarf__ |
+| Cesar Augusto Ferreira Alves | RM376614 | cesarf__ |
 | Jeferson Lima Papalino | RM376680 | jefersonpapalino |
 | Jonatas Ariel Nunes | RM376145 | eusoujoe |
 | Willian Felix Corrêa | RM372688 | will1an2522 |
 
-> O repositório definitivo já foi inserido. Os RMs e os usernames do Discord foram informados pela equipe. Faltam o RM de Cesar Augusto Ferreira Alves e o link do vídeo final.
+> Identificação completa: RM e Discord dos cinco integrantes. O repositório e o vídeo de demonstração (YouTube, 18:19) estão na seção 23.
 
 ## 1. Introdução
 
@@ -672,7 +672,7 @@ Como próximos passos, a arquitetura deve evoluir em identidade por workload, HT
 | Item | Informação |
 |---|---|
 | Repositório principal | [Tech Challenge Fase 2 — ToggleMaster](https://github.com/jefersonpapalinosp-sys/Tech_Challenge_Fase_2_ToggleMaster) |
-| Vídeo de demonstração | **PENDENTE — publicar o vídeo final (v6) e inserir o link** |
+| Vídeo de demonstração | [https://youtu.be/lcheHRVKTW8](https://youtu.be/lcheHRVKTW8) (YouTube, 18:19) |
 | Diagrama de arquitetura | `docs/arquitetura_aws_togglemaster.png` |
 | Manifestos AWS | `k8s-aws/` e `k8s-aws.zip` |
 | Docker Compose local | `docker-compose.yml` |
@@ -682,9 +682,9 @@ Como próximos passos, a arquitetura deve evoluir em identidade por workload, HT
 
 ### Checklist antes do envio
 
-- [ ] preencher o RM de Cesar (RMs dos demais e Discord dos cinco preenchidos);
+- [x] preencher RM e Discord dos cinco integrantes;
 - [x] inserir o link definitivo do repositório;
-- [ ] inserir o link público ou compartilhado do vídeo da Fase 2;
+- [x] inserir o link do vídeo da Fase 2 (YouTube, 18:19);
 - [x] confirmar o Managed Node Group `tgmnodegroup`, o tipo `t3.medium` e a escala 1/2/4 (evidência 02);
 - [x] anexar as evidências AWS datadas (evidências 02 a 14, seção 15);
 - [x] registrar HPA antes, durante e depois da carga (seção 15.4);

@@ -11,6 +11,7 @@ git clone https://github.com/jefersonpapalinosp-sys/Tech-challenge-grupo-2.git
 Set-Location .\Tech-challenge-grupo-2\fase2
 ```
 
+- [Vídeo de demonstração da Fase 2 (YouTube, 18:19)](https://youtu.be/lcheHRVKTW8)
 - [Relatório final em PDF](docs/Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL.pdf)
 - [Relatório final em Word](docs/Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL.docx)
 - [Relatório em texto, incluindo comparação com os entregáveis](docs/Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL.txt)

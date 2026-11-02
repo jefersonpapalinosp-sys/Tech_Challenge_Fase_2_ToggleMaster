@@ -36,9 +36,9 @@ DynamoDB: armazenamento NoSQL dos eventos analíticos consumidos do SQS,
 identificados por event_id. A persistência analítica é assíncrona.
 
 RELATÓRIO E VÍDEO — PÁGINAS 9–10 DO ENUNCIADO
-Cinco nomes, quatro RMs e cinco usernames do Discord no relatório; falta o RM de Cesar.
+Cinco nomes, RMs e usernames do Discord no relatório.
 Vídeo editado conferido em 02/11: 18:19, dentro do limite de 20 minutos.
-Link do vídeo reservado por solicitação.
+Vídeo publicado no YouTube (não listado): https://youtu.be/lcheHRVKTW8
 PDF e TXT disponíveis; Word fornecido como versão editável.
 Badge Google Cloud Skills Boost: opcional, sem conclusão presumida.
 
@@ -50,7 +50,7 @@ Publicados em 02/11: relatório final, esta conferência, evidências de 30/10 e
 scripts 04-carga-analytics-sqs.py e 05-acompanhar-analytics.ps1 e o README atualizado.
 Validação antes da publicação: Compose, sintaxe Python e Kustomize local/AWS.
 Na evidência 08 e no vídeo, o IP administrativo foi mascarado; o resto segue igual.
-Vídeo a enviar: ToggleMaster_Fase2_Video_Final_v6.mp4.
+Vídeo publicado (v6): https://youtu.be/lcheHRVKTW8
 
 A redação desta conferência não consultou a AWS nem alterou infraestrutura. O
 confronto usa o enunciado local, o código e as evidências datadas. O vídeo foi

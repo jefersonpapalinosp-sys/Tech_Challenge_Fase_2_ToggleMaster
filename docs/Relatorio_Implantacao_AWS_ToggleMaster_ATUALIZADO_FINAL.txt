@@ -9,7 +9,7 @@ Equipe
 
 Integrante | RM | Discord
 Afonso Victoriano Franco | RM373563 | afonso3254
-Cesar Augusto Ferreira Alves | [PREENCHER] | cesarf__
+Cesar Augusto Ferreira Alves | RM376614 | cesarf__
 Jeferson Lima Papalino | RM376680 | jefersonpapalino
 Jonatas Ariel Nunes | RM376145 | eusoujoe
 Willian Felix Corrêa | RM372688 | will1an2522
@@ -20,13 +20,11 @@ Repositório do projeto: https://github.com/jefersonpapalinosp-sys/Tech-challeng
 
 Código da Fase 2: https://github.com/jefersonpapalinosp-sys/Tech-challenge-grupo-2/tree/main/fase2
 
-Vídeo de demonstração: [INSERIR LINK DO VÍDEO]
+Vídeo de demonstração: https://youtu.be/lcheHRVKTW8
 
-Duração do vídeo exportado: 18:19
+Duração do vídeo publicado: 18:19
 
-O vídeo editado foi conferido em 02/11/2026, por quadros de cada trecho e transcrição do áudio. O link será acrescentado após a publicação.
-
-Os RMs de quatro integrantes e os usernames do Discord dos cinco foram informados pela equipe. Faltam o RM de Cesar Augusto Ferreira Alves e o link do vídeo; preencher antes do envio à FIAP.
+O vídeo editado foi conferido em 02/11/2026, por quadros de cada trecho e transcrição do áudio, e publicado no YouTube como não listado: abre para quem tem o link.
 
 Referência e escopo
 
@@ -338,8 +336,8 @@ HPA analytics | Configurado por CPU; aumento de 1 para 5 réplicas e retorno ao 
 Envio manual de SQS | Executado na gravação de 02/11: 6000 mensagens aceitas, identificadas pelo RunId video-hpa-20261102134256-40a000.
 Persistência DynamoDB | Scan com quatro itens de load-postman-fiap em 30/10 e 6000 eventos do RunId em 02/11.
 Arquitetura e decisões (p. 9) | Seção 1: propósitos de RDS, ElastiCache e DynamoDB. Seção 6: implementação do HPA analytics e justificativa da escolha frente ao KEDA.
-Vídeo até 20 minutos | Arquivo editado com 18:19, conferido em 02/11; link a preencher após a publicação.
-Identificação dos integrantes | Cinco nomes, quatro RMs e cinco usernames do Discord informados; falta o RM de Cesar.
+Vídeo até 20 minutos | Publicado no YouTube com 18:19, conferido em 02/11; link em Links de entrega.
+Identificação dos integrantes | Cinco nomes, RMs e usernames do Discord informados.
 
 Limites da conclusão
 
@@ -401,16 +399,16 @@ O arquivo apresentacao/08_COMANDOS_SOMENTE_PARTE_B.txt reúne a sequência da ap
 ------------------------------------------------------------------------
 
 11. ENTREGA E REFERÊNCIAS
-Arquivos finais e campos reservados
+Arquivos finais e conferência de envio
 
-A pasta apresentacao/entrega_final contém o relatório em Word, PDF e TXT, as evidências TXT, os quadros do ensaio de 02/11 e instruções curtas de preenchimento. O Word é a versão editável. PDF ou TXT podem compor a entrega formal prevista no enunciado; o PDF deve ser exportado novamente se o Word for alterado.
+A pasta apresentacao/entrega_final contém o relatório em Word, PDF e TXT, as evidências TXT, os quadros do ensaio de 02/11 e instruções curtas de conferência. O Word é a versão editável. PDF ou TXT podem compor a entrega formal prevista no enunciado; o PDF deve ser exportado novamente se o Word for alterado.
 
-Preencher antes de enviar
+Conferir antes de enviar
 
 Campo | Situação
-RM e Discord | Falta o RM de Cesar Augusto Ferreira Alves; o Discord dos cinco está preenchido.
-Link do vídeo | A inserir após publicação; validar acesso pelo avaliador.
-Duração final | 18:19 no arquivo conferido em 02/11; atualizar se o vídeo for editado de novo.
+RM e Discord | Preenchidos para os cinco integrantes.
+Link do vídeo | Publicado no YouTube como não listado; conferir o acesso em janela anônima.
+Duração final | 18:19, igual no arquivo conferido em 02/11 e no vídeo publicado.
 Conteúdo demonstrado | Conferido em 02/11: envio manual SQS, escala do analytics e eventos do lote no DynamoDB.
 Scripts 04 e 05 | Publicados em fase2/apresentacao/scripts, com os comandos do ensaio em COMANDOS_ANALYTICS_HPA.txt.
 Link do repositório | Destino do grupo definido como Tech-challenge-grupo-2; conferir acesso e conteúdo antes da submissão.
@@ -422,6 +420,8 @@ Repositório do grupo: https://github.com/jefersonpapalinosp-sys/Tech-challenge-
 Código-fonte da Fase 2: https://github.com/jefersonpapalinosp-sys/Tech-challenge-grupo-2/tree/main/fase2
 
 Histórico de publicações da Fase 2: https://github.com/jefersonpapalinosp-sys/Tech-challenge-grupo-2/commits/main/fase2
+
+Vídeo de demonstração: https://youtu.be/lcheHRVKTW8
 
 docs/POSTECH - Tech Challenge - Fase 2.pdf — requisitos técnicos e entregáveis.
 
@@ -441,7 +441,7 @@ Controle da revisão
 
 Esta revisão substitui o conteúdo operacional do relatório de 29/10 pelo registro do LAB 2. A versão anterior foi preservada como histórico. As informações de conta, recursos, namespaces, tipo de Load Balancer e escalabilidade foram reconciliadas com as fontes atuais do projeto.
 
-A revisão de 02/11/2026 acrescentou o ensaio de analytics e a conferência do vídeo editado, e publicou o relatório, a conferência, as evidências e os scripts 04 e 05 em fase2. A versão de 31/10 foi preservada na cópia local, em docs/historico.
+A revisão de 02/11/2026 acrescentou o ensaio de analytics e a conferência do vídeo editado, e publicou o relatório, a conferência, as evidências e os scripts 04 e 05 em fase2. A versão de 31/10 foi preservada na cópia local, em docs/historico. Os RMs, o Discord e o link do vídeo foram preenchidos na mesma data.
 
 A documentação não contém valores de credenciais. A redação do relatório não executou provisionamento, exclusão, carga ou mudanças de configuração na AWS. A carga de 02/11 foi executada na gravação, e o ajuste dos nós está descrito na seção 4.
 
