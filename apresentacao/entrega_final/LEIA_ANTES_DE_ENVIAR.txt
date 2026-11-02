@@ -7,7 +7,7 @@ A pasta evidencias contém 13 saídas datadas de AWS CLI/kubectl e o ensaio 14, 
 gravação. Nenhum desses arquivos contém credenciais.
 
 ANTES DE ENVIAR
-1. Preencher RM e Discord dos cinco integrantes na capa do Word.
+1. Preencher o RM de Cesar e o Discord dos cinco integrantes na capa do Word.
 2. Inserir o link do vídeo. Duração conferida: 18:19; atualizar se o vídeo for editado de novo.
 3. Conferir acesso ao vídeo e ao repositório pelo avaliador.
 4. Conteúdo do vídeo conferido em 02/11: envio manual SQS, escala de analytics e persistência.

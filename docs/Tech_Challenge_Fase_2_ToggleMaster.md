@@ -11,13 +11,13 @@
 
 | Integrante | RM | Discord |
 |---|---|---|
-| Afonso Victoriano Franco | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
+| Afonso Victoriano Franco | RM373563 | **PENDENTE — informar Discord** |
 | Cesar Augusto Ferreira Alves | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
-| Jeferson Lima Papalino | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
-| Jonatas Ariel Nunes | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
-| Willian Felix Corrêa | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
+| Jeferson Lima Papalino | RM376680 | **PENDENTE — informar Discord** |
+| Jonatas Ariel Nunes | RM376145 | **PENDENTE — informar Discord** |
+| Willian Felix Corrêa | RM372688 | **PENDENTE — informar Discord** |
 
-> O repositório definitivo já foi inserido. Os números de RM, usernames do Discord e o link do vídeo da Fase 2 não aparecem nos artefatos disponíveis e permanecem destacados para preenchimento com dados reais; nenhum identificador foi inventado.
+> O repositório definitivo já foi inserido. Os RMs de quatro integrantes foram informados pela equipe. Faltam o RM de Cesar Augusto Ferreira Alves, os usuários do Discord e o link do vídeo final.
 
 ## 1. Introdução
 
@@ -209,7 +209,7 @@ O cluster `eks-togglemaster` foi criado manualmente pelo **Console AWS**, confor
 | Método de criação | Console AWS |
 | Cluster IAM Role | `LabRole` |
 | Node IAM Role | `LabRole` |
-| Managed Node Group | **PENDENTE — nome não registrado nos artefatos; confirmar no Console AWS** |
+| Managed Node Group | `tgmnodegroup` no LAB 2 (evidência 02); `eks-nodegroup-academy-v2` no LAB 1 |
 | AMI | Amazon Linux 2023 (AL2023) x86_64 |
 | Tipo das instâncias | `t3.medium` |
 | Armazenamento por nó | 20 GB gp3 |
@@ -217,7 +217,7 @@ O cluster `eks-togglemaster` foi criado manualmente pelo **Console AWS**, confor
 | Capacidade desejada | 2 nós |
 | Capacidade máxima | 4 nós |
 
-Os valores `t3.medium` e `1/2/4` constam no guia de implementação, mas ainda precisam ser confrontados com uma captura atual de **EKS → Compute → Managed node groups**. O nome real do Managed Node Group não foi encontrado nos documentos. Esses dados não devem ser apresentados como evidência atual do cluster até essa confirmação.
+No LAB 2, a evidência 02 confirma o Managed Node Group `tgmnodegroup`, com instâncias `t3.medium` ON_DEMAND e escala `1/2/4`. No LAB 1, o grupo equivalente era o `eks-nodegroup-academy-v2`, registrado no apêndice Validação final do AWS Lab.
 
 ### 7.3 Imagens publicadas
 
@@ -239,7 +239,7 @@ http://ae6a5981f8069438481a714114fef81d-9676d8a498457cbb.elb.us-east-1.amazonaws
 
 Esse DNS é gerado pela AWS e pode mudar se o Service do ingress-nginx for recriado. A raiz `/` não possui rota e, portanto, retorna `404 Not Found` do Nginx. Esse retorno não indica falha do Load Balancer; as rotas válidas são as definidas nos Ingresses.
 
-Na tentativa de revalidação realizada em **29/10/2026 às 01:35 BRT**, o endereço histórico não respondeu na porta 80. Por isso, ele permanece documentado como endpoint observado no snapshot da implantação, mas não como endpoint atualmente disponível. Uma nova captura do NLB e do Service do ingress-nginx deve ser realizada quando o laboratório AWS estiver ativo.
+Na tentativa de revalidação realizada em **29/10/2026 às 01:35 BRT**, o endereço histórico não respondeu na porta 80. Por isso, ele permanece documentado como endpoint observado no snapshot da implantação, mas não como endpoint atualmente disponível. No LAB 2, o Service do ingress-nginx criou o Classic Load Balancer `a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com`, com os dois nós InService e as rotas validadas (evidência 11 e vídeo).
 
 ## 8. Kubernetes no EKS
 
@@ -345,7 +345,7 @@ Pods autorizados
 
 Foram utilizados quatro documentos no Secrets Manager: `togglemaster/auth`, `togglemaster/flag`, `togglemaster/targeting` e `togglemaster/evaluation`. As três URLs de banco, a chave administrativa, o token Redis e a chave interna do evaluation permanecem no serviço gerenciado.
 
-O registro operacional de 29/10/2026 informa quatro recursos ExternalSecret com `SecretSynced=True` e o ClusterSecretStore em estado válido. A saída bruta e datada de `kubectl get` permanece pendente na seção 15.
+No LAB 2, a coleta de 30/10/2026 registrou o ClusterSecretStore `aws-secrets-manager` em estado Valid e quatro recursos ExternalSecret com `SecretSynced=True` (evidência 10, seção 15).
 
 Cada recurso `ExternalSecret` faz o External Secrets Operator criar ou atualizar um `Secret` nativo do Kubernetes. Nesse objeto, os valores ficam no campo `data`, codificados em Base64. **Base64 é codificação reversível, não criptografia.** A confidencialidade depende dos controles do AWS Secrets Manager, do RBAC e da proteção dos Secrets no cluster; nenhuma evidência deve exibir ou decodificar esses valores.
 
@@ -446,7 +446,7 @@ Após a correção, os logs confirmaram conexão com o Redis Cluster e inicializ
 
 **Figura 4 — Sequência registrada no relatório operacional do smoke test externo.**
 
-Segundo o relatório operacional de 29/10/2026, o teste realizado pelo endpoint do NLB executou as seguintes etapas; a captura bruta dessa execução ainda deve ser anexada:
+Segundo o relatório operacional de 29/10/2026, o teste realizado pelo endpoint do NLB executou as etapas abaixo. No LAB 2, o mesmo fluxo foi repetido pelo Load Balancer e aparece no vídeo (12:03); os eventos gravados estão nas evidências 07 e 14:
 
 1. criação de uma API key com a chave administrativa;
 2. validação da nova API key no auth-service;
@@ -659,9 +659,9 @@ Uma estimativa formal deve registrar região, tipos de instância, armazenamento
 
 ## 22. Conclusão
 
-A Fase 2 transformou o ToggleMaster de um MVP monolítico em uma plataforma de microsserviços conteinerizada e implantada em Kubernetes. A execução local foi revalidada nesta revisão; a implantação no EKS real consta no registro operacional de 29/10/2026, cujas evidências brutas ainda precisam ser anexadas.
+A Fase 2 transformou o ToggleMaster de um MVP monolítico em uma plataforma de microsserviços conteinerizada e implantada em Kubernetes. A execução local foi revalidada, e a implantação no EKS foi comprovada no LAB 2, com as evidências 02 a 14 reunidas na seção 15.
 
-O uso combinado de RDS, ElastiCache, SQS e DynamoDB alinhou cada tipo de dado ao serviço mais adequado. O Nginx Ingress e o NLB forneceram uma entrada única, enquanto Metrics Server e HPA foram configurados para viabilizar escalabilidade horizontal. A demonstração de scale-out permanece pendente. A gestão de segredos foi elevada para o AWS Secrets Manager, sincronizado pelo External Secrets Operator.
+O uso combinado de RDS, ElastiCache, SQS e DynamoDB alinhou cada tipo de dado ao serviço mais adequado. O Nginx Ingress e o Load Balancer forneceram uma entrada única, e o Metrics Server com os HPAs garantiu a escala horizontal: o evaluation e o analytics foram de 1 para 5 réplicas sob carga e voltaram ao mínimo. A gestão de segredos foi elevada para o AWS Secrets Manager, sincronizado pelo External Secrets Operator.
 
 O teste ponta a ponta confirmou a integração entre todas as camadas: autenticação, configuração de flags, regras, avaliação, cache, fila e analytics. A correção realizada no cliente Redis também demonstrou capacidade de diagnóstico e adaptação a diferenças reais entre o ambiente local e um serviço gerenciado.
 
@@ -672,7 +672,7 @@ Como próximos passos, a arquitetura deve evoluir em identidade por workload, HT
 | Item | Informação |
 |---|---|
 | Repositório principal | [Tech Challenge Fase 2 — ToggleMaster](https://github.com/jefersonpapalinosp-sys/Tech_Challenge_Fase_2_ToggleMaster) |
-| Vídeo de demonstração | **PENDENTE — inserir o link real da Fase 2** |
+| Vídeo de demonstração | **PENDENTE — publicar o vídeo final (v6) e inserir o link** |
 | Diagrama de arquitetura | `docs/arquitetura_aws_togglemaster.png` |
 | Manifestos AWS | `k8s-aws/` e `k8s-aws.zip` |
 | Docker Compose local | `docker-compose.yml` |
@@ -682,14 +682,14 @@ Como próximos passos, a arquitetura deve evoluir em identidade por workload, HT
 
 ### Checklist antes do envio
 
-- [ ] preencher RM e Discord de todos os integrantes;
+- [ ] preencher o RM de Cesar e o Discord de todos os integrantes (RMs dos demais preenchidos);
 - [x] inserir o link definitivo do repositório;
 - [ ] inserir o link público ou compartilhado do vídeo da Fase 2;
-- [ ] confirmar no Console o nome do Managed Node Group, tipo de instância e escala 1/2/4;
-- [ ] coletar as evidências AWS brutas e datadas indicadas na seção 15;
-- [ ] registrar HPA antes, durante e depois da carga;
-- [ ] publicar ou recriar o endpoint do NLB e validar as rotas;
-- remover ou mascarar qualquer credencial em capturas de tela;
+- [x] confirmar o Managed Node Group `tgmnodegroup`, o tipo `t3.medium` e a escala 1/2/4 (evidência 02);
+- [x] anexar as evidências AWS datadas (evidências 02 a 14, seção 15);
+- [x] registrar HPA antes, durante e depois da carga (seção 15.4);
+- [x] validar as rotas pelo Load Balancer do LAB 2 (evidência 11 e vídeo);
+- [x] capturas sem credenciais; IP administrativo mascarado no vídeo e na evidência 08;
 - exportar novamente o PDF após qualquer alteração no Word;
 - revisar o sumário e a numeração de páginas.
 

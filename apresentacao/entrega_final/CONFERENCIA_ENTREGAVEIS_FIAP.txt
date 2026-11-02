@@ -36,7 +36,7 @@ DynamoDB: armazenamento NoSQL dos eventos analíticos consumidos do SQS,
 identificados por event_id. A persistência analítica é assíncrona.
 
 RELATÓRIO E VÍDEO — PÁGINAS 9–10 DO ENUNCIADO
-Cinco nomes confirmados no relatório. RM e Discord reservados por solicitação.
+Cinco nomes e quatro RMs no relatório; faltam o RM de Cesar e o Discord dos cinco.
 Vídeo editado conferido em 02/11: 18:19, dentro do limite de 20 minutos.
 Link do vídeo reservado por solicitação.
 PDF e TXT disponíveis; Word fornecido como versão editável.
