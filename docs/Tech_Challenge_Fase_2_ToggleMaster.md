@@ -484,7 +484,7 @@ As chaves devem ser informadas em tempo de execução e nunca incluídas em scri
 
 ## 15. Evidências reais e rastreabilidade
 
-As evidências abaixo distinguem três situações: coleta atual reproduzível, registro histórico do ambiente AWS e itens ainda pendentes. Resultados não observados não são apresentados como concluídos.
+As evidências abaixo combinam a coleta local de 29/10/2026 e as coletas do LAB 2 na AWS, de 30/10 e 02/11/2026. Resultados não observados não são apresentados como concluídos.
 
 ### 15.1 Docker Compose — coleta atual
 
@@ -519,32 +519,32 @@ Snapshot obtido em **29/10/2026 às 01:36:29 BRT**, sem geração de carga:
 
 Esse snapshot comprova que os HPAs locais recebem métricas, mas representa somente o estado inicial. Ele não demonstra scale-out nem scale-in.
 
-### 15.3 Inventário AWS registrado na validação
+### 15.3 Inventário AWS comprovado no LAB 2
 
-O relatório operacional registrou o seguinte snapshot do AWS Academy em **29/10/2026**. Como o ambiente não pôde ser consultado novamente nesta revisão, a tabela separa o registro existente da captura bruta ainda necessária.
+O inventário abaixo vem das coletas do LAB 2 (conta 533267349027, região us-east-1), feitas com AWS CLI e kubectl em 30/10/2026 e, no caso do analytics, em 02/11/2026. As evidências estão em docs/evidencias_aws_2026-10-30 e docs/evidencias_aws_2026-11-02. O registro anterior, do LAB 1, de 29/10/2026, usava outra conta e outros nomes de recursos.
 
-| Item exigido | Registro datado de 29/10/2026 | Situação da evidência |
+| Item exigido | Recurso no LAB 2 | Situação |
 |---|---|---|
-| Cinco repositórios ECR | `058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/auth-service:v1`<br>`058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/flag-service:v1`<br>`058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/targeting-service:v1`<br>`058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/evaluation-service:v3`<br>`058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/analytics-service:v1` | Registro operacional disponível; captura do Console/CLI pendente |
-| EKS e Managed Node Group | `eks-togglemaster`, Kubernetes 1.37, dois nós `Ready` | Cluster registrado; nome do Node Group, tipo e escala precisam de captura atual |
-| Cinco aplicações | Deployments de auth, flag, targeting, evaluation e analytics disponíveis no snapshot | Registro operacional disponível; `kubectl get deployments,pods -A` datado pendente |
-| Três RDS | `db-auth-service`, `db-flag-service`, `db-targeting-service`, privados | Registro operacional disponível; captura `describe-db-instances` pendente |
-| ElastiCache | Redis Cluster `redis-evaluation-service`, TLS e autenticação | Registro operacional e logs do evaluation disponíveis; captura do Console/CLI pendente |
-| SQS | fila Standard `evaluation-analytics-queue`, evento publicado e consumido | Fluxo funcional registrado; captura dos atributos da fila pendente |
-| DynamoDB | tabela `ToggleMasterAnalytics`; item persistido pelo analytics | Fluxo funcional registrado; captura `describe-table` e item sanitizado pendente |
-| ExternalSecrets | `auth-secret`, `flag-secret`, `targeting-secret` e `evaluation-secret` com `SecretSynced=True`; store válido | Registro operacional disponível; saída datada de `kubectl get` pendente |
-| NLB e Ingress | ingress-nginx publicado por NLB internet-facing, com rotas `/auth`, `/flags`, `/rules` e `/evaluate` | Registro histórico; captura atual pendente e endpoint indisponível na revalidação de 29/10/2026 às 01:35 BRT |
-| HPAs | evaluation e analytics configurados em `autoscaling/v2`, CPU 30%, mínimo 1 e máximo 5 | **Configurado — demonstração de scale-out pendente** |
+| Cinco ECR | `533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/`: auth-service:v1, lag-service:v1 (flag), targeting-service:v1, evaluation-service:v3 e analytics-service:v1 | Atendido — evidência 03 |
+| EKS e Node Group | `ekstogglemaster`, Kubernetes 1.37; `tgmnodegroup` t3.medium, 1/2/4, dois nós Ready | Atendido — evidência 02 |
+| Cinco aplicações | auth, flag, targeting, evaluation e analytics em 1/1 | Atendido — evidência 09 |
+| Três RDS | `db-authservice`, `dbflags` e `dbtargeting`, privados e criptografados | Atendido — evidência 04 |
+| ElastiCache | `redisevaluation`, cluster mode, TLS, AUTH e criptografia em repouso | Atendido — evidência 05 |
+| SQS | `tgmqueue` Standard, com criptografia gerenciada pela AWS | Atendido — evidência 06 |
+| DynamoDB | `ToggleMasterAnalytics`, PAY_PER_REQUEST, chave `event_id` | Atendido — evidências 07 e 14 |
+| ExternalSecrets | 4 recursos `SecretSynced=True`; store `Valid` | Atendido — evidência 10 |
+| Load Balancer e Ingress | Classic Load Balancer internet-facing e 4 rotas Ingress | Atendido — evidências 09 e 11; Classic difere de ALB/NLB |
+| HPAs | autoscaling/v2, CPU 30%, mínimo 1, máximo 5 | Atendido — evidências 13 e 14 |
 
-### 15.4 Evidência obrigatória ainda pendente para os HPAs
+### 15.4 Demonstração dos HPAs no EKS
 
-| Momento | Evidência esperada | Estado |
+| Momento | Registro observado | Estado |
 |---|---|---|
-| Antes da carga | `kubectl get hpa -A` e réplicas iniciais, com data e hora | Pendente |
-| Durante a carga | CPU acima do alvo, aumento de `DESIRED/CURRENT REPLICAS` e pods adicionais | Pendente |
-| Depois da carga | redução da CPU e retorno das réplicas após a janela de estabilização | Pendente |
+| Antes da carga | evaluation 1/1 com CPU 1%/30% (31/10); analytics com 1 réplica e CPU 2%/30% (02/11) | Atendido |
+| Durante a carga | evaluation: CPU 59% e depois 172%, até 5 réplicas; analytics: CPU 340%/30% com 6000 mensagens no SQS, de 1 para 5 réplicas | Atendido |
+| Depois da carga | os dois voltaram a 1 réplica, com CPU 1%/30% | Atendido |
 
-Enquanto os três snapshots acima não forem coletados no EKS, o documento não afirma que a escalabilidade horizontal foi demonstrada.
+As duas sequências foram registradas no EKS: evaluation em 31/10/2026 (evidência 13) e analytics em 02/11/2026 (evidência 14). Os dois trechos também aparecem no vídeo, a partir de 12:21 e de 13:28.
 
 ## 16. Arquitetura de microsserviços
 
@@ -695,4 +695,4 @@ Como próximos passos, a arquitetura deve evoluir em identidade por workload, HT
 
 ---
 
-**Documento elaborado a partir dos arquivos do projeto, dos manifestos e do registro operacional do estado AWS em 29/10/2026. As capturas brutas pendentes estão identificadas na seção 15. Nenhuma credencial temporária, senha, token ou API key foi incluída.**
+**Documento elaborado a partir dos arquivos do projeto, dos manifestos e do registro operacional do estado AWS em 29/10/2026. As evidências do LAB 2, de 30/10 e 02/11/2026, estão reunidas na seção 15. Nenhuma credencial temporária, senha, token ou API key foi incluída.**
