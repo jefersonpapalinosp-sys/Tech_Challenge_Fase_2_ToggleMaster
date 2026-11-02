@@ -1,0 +1,32 @@
+TOGGLEMASTER - EVIDÊNCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Região: us-east-1 | Data: 2026-10-30 22:05:10 -03:00
+
+Workloads, pods, serviços, Ingress e HPA
+========================================
+
+Comando equivalente:
+kubectl get deployments,pods,services,ingress,hpa -A
+
+Saída:
+NAMESPACE            NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+analytics-service    analytics-service    1/1     1            1           152m
+auth-service         auth-service         1/1     1            1           152m
+evaluation-service   evaluation-service   1/1     1            1           152m
+flag-service         flag-service         1/1     1            1           152m
+targeting-service    targeting-service    1/1     1            1           152m
+NAMESPACE            NAME                                  READY   STATUS    RESTARTS   AGE
+analytics-service    analytics-service-57dfc596fd-s6pnv    1/1     Running   0          152m
+auth-service         auth-service-794c6946bd-xbllk         1/1     Running   0          152m
+evaluation-service   evaluation-service-65f4f758fc-j7d2x   1/1     Running   0          133m
+flag-service         flag-service-5b99f769fc-wc77v         1/1     Running   0          152m
+targeting-service    targeting-service-77f7856544-r6pbz    1/1     Running   0          152m
+NAMESPACE            NAME                 CLASS   HOSTS   ADDRESS                                                                   PORTS   AGE
+auth-service         auth-ingress         nginx   *       a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com   80      152m
+evaluation-service   evaluation-ingress   nginx   *       a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com   80      152m
+flag-service         flag-ingress         nginx   *       a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com   80      152m
+targeting-service    targeting-ingress    nginx   *       a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com   80      152m
+NAMESPACE            NAME                     REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+analytics-service    analytics-service-hpa    Deployment/analytics-service    cpu: 1%/30%   1         5         1          152m
+evaluation-service   evaluation-service-hpa   Deployment/evaluation-service   cpu: 1%/30%   1         5         1          152m
+
+Observação: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.

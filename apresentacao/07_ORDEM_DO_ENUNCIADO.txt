@@ -1,0 +1,34 @@
+SINCRONIZAÇÃO COM POSTECH - Tech Challenge - Fase 2.pdf
+Referência: paginação impressa do enunciado (11 páginas).
+Apresentador A: 0:00–9:00 / deixas 1–18. Apresentador B: 9:00–19:00 / 19–37.
+Cada um controla as telas e os comandos da sua parte.
+
+Item 1 / p. 4 / deixas 2–6: análise dos serviços -> Dockerfiles -> Compose.
+Item 2 / pp. 4–6 / deixas 7–15: EKS -> Node Group -> ECR -> três RDS ->
+ElastiCache -> DynamoDB -> SQS -> referências de conexão e rede.
+Item 3 / pp. 6–7 / deixas 16–17: Metrics Server -> Nginx Ingress Controller.
+Item 4 / pp. 7–8 / deixas 19–27: Namespace -> Deployment -> Service -> Secret ->
+ConfigMap -> Ingress -> boas práticas -> pods/Jobs -> chamada pelo Load Balancer.
+Item 5 / p. 8 / deixas 28–30: HPA evaluation -> HPA analytics -> opção KEDA.
+Demonstração / p. 9 / deixas 31–35: carga evaluation -> scale-out/scale-in ->
+envio manual SQS -> scale-out analytics -> dados correlacionados no DynamoDB.
+Explicação / p. 9 / deixa 36: arquitetura -> desafios -> propósitos RDS/Redis/DynamoDB.
+Encerramento / deixa 37; duração final inferior a 20 minutos.
+
+CHECKLIST DOS ENTREGÁVEIS (páginas 9–10)
+[ ] docker compose up e nove containers saudáveis (deixa 5).
+[ ] Cluster em nuvem e cinco serviços como pods (7–8 e 26).
+[ ] Ingress com chamada curl/Postman para o Load Balancer (27).
+[ ] Carga evaluation com HPA e pods: mostrar coleta datada ou ensaio (31–32).
+[ ] Envio manual de mensagens SQS (33).
+[ ] Analytics escalando com múltiplas réplicas disponíveis (34: PENDENTE).
+[ ] Dados correlacionados no DynamoDB (35).
+[ ] Arquitetura, limitações da LabRole, justificativa HPA e três armazenamentos.
+[ ] Relatório PDF/TXT: nomes, RM, Discord, links dos repositórios e do vídeo.
+[ ] Vídeo salvo em local acessível e duração até 20 minutos.
+Opcional: badge/perfil público Google Cloud Skills Boost (p. 10).
+
+As caixas são para conferência final do vídeo, não status de provisionamento.
+LocalStack substitui DynamoDB Local: adaptação declarada.
+Classic LB observado difere do ALB/NLB mencionado: adequação a revisar.
+A escala do analytics continua pendente; reorganizar o roteiro não a comprova.

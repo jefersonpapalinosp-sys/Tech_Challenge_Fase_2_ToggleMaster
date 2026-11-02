@@ -1,0 +1,36 @@
+TOGGLEMASTER - EVIDÊNCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Região: us-east-1 | Data: 2026-10-30 22:04:45 -03:00
+
+EKS e Managed Node Group
+========================
+
+Comando equivalente:
+aws eks describe-cluster / describe-nodegroup
+
+Saída:
+---------------------------------------------
+|              DescribeCluster              |
++-----------------+-------------------------+
+|  ClusterSG      |  sg-079be737f17db5c6b   |
+|  EndpointPublic |  True                   |
+|  Name           |  ekstogglemaster        |
+|  Status         |  ACTIVE                 |
+|  Version        |  1.37                   |
+|  VpcId          |  vpc-09d66ad83422a42ee  |
++-----------------+-------------------------+
+---------------------------------------------------------------------
+|                         DescribeNodegroup                         |
++--------------+----------+------+------+----------------+----------+
+| CapacityType | Desired  | Max  | Min  |     Name       | Status   |
++--------------+----------+------+------+----------------+----------+
+|  ON_DEMAND   |  2       |  4   |  1   |  tgmnodegroup  |  ACTIVE  |
++--------------+----------+------+------+----------------+----------+
+||                          InstanceTypes                          ||
+|+-----------------------------------------------------------------+|
+||  t3.medium                                                      ||
+|+-----------------------------------------------------------------+|
+NAME                         STATUS   ROLES    AGE    VERSION               INTERNAL-IP   EXTERNAL-IP    OS-IMAGE                        KERNEL-VERSION                            CONTAINER-RUNTIME
+ip-10-0-1-114.ec2.internal   Ready    <none>   3h9m   v1.37.1-eks-577a51e   10.0.1.114    100.55.66.58   Amazon Linux 2023.12.20261026   6.18.56-125.164.amzn2023.x86_64 (amd64)   containerd://2.3.7+unknown
+ip-10-0-2-190.ec2.internal   Ready    <none>   3h9m   v1.37.1-eks-577a51e   10.0.2.190    3.91.95.185    Amazon Linux 2023.12.20261026   6.18.56-125.164.amzn2023.x86_64 (amd64)   containerd://2.3.7+unknown
+
+Observação: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.

@@ -1,0 +1,78 @@
+MAPA DE TELAS — SEQUÊNCIA DO ENUNCIADO
+As numerações de slides e evidências são identificadores; abrir na ordem das deixas abaixo.
+
+01 | 0:00 | A: Slide 1: abertura. Mostrar a sequência dos itens 1 a 5 do enunciado.
+
+02 | 0:25 | A: Item 1, página 4. Identificar as pastas dos cinco microsserviços.
+
+03 | 0:50 | A: apoio_codigo/auth-service.Dockerfile e flag-service.Dockerfile.
+
+04 | 1:15 | A: Comando 02: imagens construídas.
+
+05 | 1:35 | A: Comando 01: docker compose up e os nove containers. Slide 4 como apoio.
+
+06 | 2:05 | A: Comando 02: health checks nas portas publicadas.
+
+07 | 2:30 | A: Item 2, páginas 4–6. EKS no Console ou evidência 02, com data da coleta.
+
+08 | 3:00 | A: Evidência 02: tgmnodegroup, LabRole e escala 1/2/4. Conferir a role no Console.
+
+09 | 3:30 | A: Evidência 03: ECR e imagens.
+
+10 | 4:00 | A: Evidência 04: os três RDS.
+
+11 | 4:40 | A: Evidência 05: ElastiCache.
+
+12 | 5:20 | A: Evidência 07: definição da tabela DynamoDB. Slide 3 para comparar os armazenamentos.
+
+13 | 5:50 | A: Evidência 06: SQS tgmqueue.
+
+14 | 6:15 | A: Evidência 08: Security Groups e endpoints privados.
+
+15 | 6:40 | A: 06_URLS_E_NOMES_DO_LAB.txt: nomes e endpoints sem senhas.
+
+16 | 7:00 | A: Item 3, página 6. Comando 03: Metrics Server, kubectl top nodes e top pods.
+
+17 | 7:45 | A: Item 3, páginas 6–7. Comando 03: controller ingress-nginx, Helm e Service; evidência 11.
+
+18 | 8:30 | A: A encerra o item 3 e passa a palavra a B às 9:00.
+
+19 | 9:00 | B: Item 4, páginas 7–8. Comando 04: contexto, namespaces e flag-kustomization.yaml.
+
+20 | 9:20 | B: apoio_codigo/flag-deployment.yaml: imagem ECR e réplicas.
+
+21 | 9:45 | B: Comando 04: Services ClusterIP dos cinco namespaces.
+
+22 | 10:05 | B: Comando 04 ou evidências 10 e 12: Secrets/ExternalSecrets, apenas nomes e status.
+
+23 | 10:35 | B: apoio_codigo/evaluation-configmap.yaml: nomes das variáveis e URLs internas.
+
+24 | 11:00 | B: Comando 04: Ingress e apoio_codigo/auth-ingress.yaml.
+
+25 | 11:25 | B: Item 4: boas práticas. Mostrar probes, resources e securityContext no flag-deployment.yaml.
+
+26 | 11:50 | B: Comando 04: Jobs, Deployments e cinco pods.
+
+27 | 12:10 | B: Comando 05 ou Postman: validar chave, criar flag/regra e avaliar pelo Load Balancer.
+
+28 | 12:50 | B: Item 5, página 8. apoio_codigo/evaluation-hpa.yaml e kubectl get hpa.
+
+29 | 13:10 | B: apoio_codigo/analytics-hpa.yaml.
+
+30 | 13:30 | B: Item 5: justificar opção Academy; KEDA é alternativa opcional do enunciado.
+
+31 | 13:50 | B: Demonstração, página 9. Comando 06; evidência 13.
+
+32 | 14:25 | B: Evidência 13: encerramento da carga e retorno a 1/1.
+
+33 | 15:00 | B: Comando 07: enviar mensagens sintéticas manualmente para tgmqueue e anotar RunId.
+
+34 | 15:25 | B: Comando 07: HPA e pods do analytics em watch. PENDENTE: registrar CPU e múltiplas réplicas disponíveis.
+
+35 | 16:35 | B: Comando 07: filtrar DynamoDB pelo RunId; separar do flag_name do teste HTTP.
+
+36 | 17:20 | B: Slides 2, 3 e 6: arquitetura, propósito dos armazenamentos e desafios.
+
+37 | 18:40 | B: Slide 8: encerramento. Conferir checklist de entregáveis fora da gravação.
+
+01_identidade é apoio de conta/região. Evidências 01–12 são anteriores à recriação dos nós; 13 é posterior. Não apresentar como um snapshot simultâneo.

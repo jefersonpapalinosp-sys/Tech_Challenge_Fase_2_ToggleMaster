@@ -55,7 +55,7 @@ Ele funciona da seguinte forma:
     
     # --- Configuração da AWS (Obrigatório para o desafio) ---
     # Cole a URL da fila SQS que você criou no console da AWS
-    AWS_SQS_URL="https://sqs.us-east-1.amazonaws.com/058264096738/evaluation-analytics-queue"
+    AWS_SQS_URL="https://sqs.us-east-1.amazonaws.com/533267349027/tgmqueue"
     
     # Região da sua fila SQS
     AWS_REGION="us-east-1" 
@@ -65,7 +65,7 @@ Ele funciona da seguinte forma:
 
     ```text
     REDIS_CLUSTER_MODE="true"
-    REDIS_URL="rediss://:<TOKEN_URL_ENCODED>@clustercfg.redis-evaluation-service.ifqrsm.use1.cache.amazonaws.com:6379"
+    REDIS_URL="rediss://:<AUTH_TOKEN_URL_ENCODED>@clustercfg.redisevaluation.ymqqul.use1.cache.amazonaws.com:6379"
     ```
 
 4.  **Instale as Dependências:**

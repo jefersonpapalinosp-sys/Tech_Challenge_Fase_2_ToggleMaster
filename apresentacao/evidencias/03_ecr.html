@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; background: #0f172a; color: #e5e7eb; }
+  body { padding: 34px; font-family: Consolas, "Cascadia Mono", monospace; }
+  .frame { border: 1px solid #334155; border-radius: 14px; overflow: hidden; box-shadow: 0 14px 36px rgba(0,0,0,.35); }
+  .bar { background: #172033; padding: 16px 22px; color: #ffb347; font: 700 20px Arial, sans-serif; border-bottom: 1px solid #334155; }
+  pre { margin: 0; padding: 24px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 16px; line-height: 1.38; }
+</style>
+</head>
+<body><div class="frame"><div class="bar">AWS • ToggleMaster • Evidência técnica</div><pre>TOGGLEMASTER - EVID&#202;NCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Regi&#227;o: us-east-1 | Data: 2026-10-30 22:04:53 -03:00
+
+Reposit&#243;rios e imagens no Amazon ECR
+====================================
+
+Comando equivalente:
+aws ecr describe-repositories / describe-images
+
+Sa&#237;da:
+--------------------------------------------------------------
+|                    DescribeRepositories                    |
++------------+--------------------------------+--------------+
+| Mutability |          Repository            | ScanOnPush   |
++------------+--------------------------------+--------------+
+|  MUTABLE   |  namespace/lag-service         |  False       |
+|  MUTABLE   |  namespace/analytics-service   |  False       |
+|  MUTABLE   |  namespace/auth-service        |  False       |
+|  MUTABLE   |  namespace/targeting-service   |  False       |
+|  MUTABLE   |  namespace/evaluation-service  |  False       |
++------------+--------------------------------+--------------+
+---------------------------------------------------------------------------------------
+|                                   DescribeImages                                    |
++-----------------------------------+--------------------------+------------+---------+
+|              Pushed               |       Repository         | SizeBytes  |  Tags   |
++-----------------------------------+--------------------------+------------+---------+
+|  2026-10-30T19:24:53.492000-03:00 |  namespace/auth-service  |  6989447   |  null   |
+|  2026-10-30T19:24:53.496000-03:00 |  namespace/auth-service  |  1590      |  null   |
+|  2026-10-30T19:24:53.945000-03:00 |  namespace/auth-service  |  6989447   |  [&quot;v1&quot;] |
++-----------------------------------+--------------------------+------------+---------+
+--------------------------------------------------------------------------------------
+|                                   DescribeImages                                   |
++-----------------------------------+-------------------------+------------+---------+
+|              Pushed               |       Repository        | SizeBytes  |  Tags   |
++-----------------------------------+-------------------------+------------+---------+
+|  2026-10-30T19:25:29.602000-03:00 |  namespace/lag-service  |  1445      |  null   |
+|  2026-10-30T19:25:29.556000-03:00 |  namespace/lag-service  |  54449074  |  null   |
+|  2026-10-30T19:25:30.080000-03:00 |  namespace/lag-service  |  54449074  |  [&quot;v1&quot;] |
++-----------------------------------+-------------------------+------------+---------+
+--------------------------------------------------------------------------------------------
+|                                      DescribeImages                                      |
++-----------------------------------+-------------------------------+------------+---------+
+|              Pushed               |          Repository           | SizeBytes  |  Tags   |
++-----------------------------------+-------------------------------+------------+---------+
+|  2026-10-30T19:25:55.847000-03:00 |  namespace/targeting-service  |  54449026  |  null   |
+|  2026-10-30T19:25:55.841000-03:00 |  namespace/targeting-service  |  1460      |  null   |
+|  2026-10-30T19:25:56.322000-03:00 |  namespace/targeting-service  |  54449026  |  [&quot;v1&quot;] |
++-----------------------------------+-------------------------------+------------+---------+
+---------------------------------------------------------------------------------------------
+|                                      DescribeImages                                       |
++-----------------------------------+--------------------------------+------------+---------+
+|              Pushed               |          Repository            | SizeBytes  |  Tags   |
++-----------------------------------+--------------------------------+------------+---------+
+|  2026-10-30T19:26:03.925000-03:00 |  namespace/evaluation-service  |  1607      |  null   |
+|  2026-10-30T19:26:03.918000-03:00 |  namespace/evaluation-service  |  7806171   |  null   |
+|  2026-10-30T19:26:04.376000-03:00 |  namespace/evaluation-service  |  7806171   |  [&quot;v3&quot;] |
++-----------------------------------+--------------------------------+------------+---------+
+--------------------------------------------------------------------------------------------
+|                                      DescribeImages                                      |
++-----------------------------------+-------------------------------+------------+---------+
+|              Pushed               |          Repository           | SizeBytes  |  Tags   |
++-----------------------------------+-------------------------------+------------+---------+
+|  2026-10-30T19:26:36.114000-03:00 |  namespace/analytics-service  |  62879281  |  null   |
+|  2026-10-30T19:26:36.121000-03:00 |  namespace/analytics-service  |  1461      |  null   |
+|  2026-10-30T19:26:36.610000-03:00 |  namespace/analytics-service  |  62879281  |  [&quot;v1&quot;] |
++-----------------------------------+-------------------------------+------------+---------+
+
+Observa&#231;&#227;o: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.</pre></div></body>
+</html>

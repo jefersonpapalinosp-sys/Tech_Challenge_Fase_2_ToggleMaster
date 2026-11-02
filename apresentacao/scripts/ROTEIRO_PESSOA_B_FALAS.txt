@@ -1,0 +1,150 @@
+ROTEIRO — PESSOA B (JEFERSON) — VÍDEO 3: FALAS PARA REGRAVAR (SOMENTE VOZ)
+
+Regravações planejadas (3 vídeos):
+  Vídeo 1 — Escalabilidade do analytics: FALAS_ANALYTICS_HPA.txt + COMANDOS_ANALYTICS_HPA.txt
+  Vídeo 2 — Telas da pessoa A: ROTEIRO_PESSOA_A_TELAS_AWS.txt
+  Vídeo 3 — Falas da pessoa B (ESTE ARQUIVO)
+
+As telas da sua parte já estão boas; o que falta é a explicação. Você grava SÓ A VOZ e
+eu coloco cada fala sobre a tela correspondente do vídeo final
+(ToggleMaster_Fase2_Video_Final.mp4), substituindo o áudio original.
+
+------------------------------------------------------------------------
+COMO GRAVAR
+------------------------------------------------------------------------
+- Use o mesmo microfone e o mesmo lugar do vídeo original, em silêncio.
+- Pode gravar no OBS (qualquer tela), no Gravador de Voz do Windows ou no celular.
+- Leia as falas em ordem, num único arquivo, com 3 segundos de silêncio entre elas.
+- Não precisa dizer o número da fala.
+- Se errar, pare 3 segundos e repita a fala inteira; eu uso a última versão.
+- Fale em ritmo normal. Cada fala tem uma duração máxima: se passar, corte palavras.
+- Onde houver [entre colchetes], é uma observação; não leia.
+
+Coluna "Tela": o que aparece no vídeo final enquanto a fala toca.
+Os trechos 14:32–15:35 (analytics) serão substituídos pelo Vídeo 1, então não estão aqui.
+
+========================================================================
+B1 — 9:12–10:20 — máx. 45 s
+Tela: VS Code com os arquivos de apoio_codigo (HPA, ConfigMap, kustomization, Dockerfile).
+========================================================================
+"Obrigado, Afonso. Agora os manifestos Kubernetes, item 4 do enunciado. Cada
+microsserviço tem o seu conjunto: Namespace, Deployment com a imagem do ECR, Service do
+tipo ClusterIP, ConfigMap, o ExternalSecret que gera o Secret, o Ingress e, no evaluation
+e no analytics, o HPA. Aqui no editor estão alguns exemplos: o HPA do analytics, o
+ConfigMap do evaluation e o kustomization do flag, que aplica o namespace e junta os
+recursos do serviço. Para o ambiente local, cada serviço também tem o seu Dockerfile
+multi-stage, e um único docker-compose sobe tudo."
+
+========================================================================
+B2 — 10:20–10:45 — máx. 15 s
+Tela: execução do 01-preparar-sessao.ps1 e os 2 nós Ready.
+========================================================================
+"Para validar no cluster, primeiro preparamos a sessão: o script carrega as credenciais
+do laboratório, configura o acesso ao EKS e lista os nós. Os dois nós t3.medium estão
+Ready."
+
+========================================================================
+B3 — 10:45–11:29 — máx. 25 s
+Tela: contexto ekstogglemaster, kubectl get nodes e kubectl get namespaces.
+========================================================================
+"O kubectl aponta para o cluster ekstogglemaster, na conta do laboratório. Os dois nós
+estão Ready, e cada microsserviço roda no seu próprio namespace: auth-service,
+flag-service, targeting-service, evaluation-service e analytics-service. Separar as
+aplicações por namespace é uma das boas práticas pedidas no enunciado."
+
+========================================================================
+B4 — 11:29–11:57 — máx. 18 s
+Tela: kubectl get services de cada namespace (tipo ClusterIP, portas 8001 a 8005).
+========================================================================
+"Cada aplicação tem um Service do tipo ClusterIP, nas portas 8001 a 8005. Esse endereço
+só é acessível dentro do cluster e continua o mesmo quando os pods são recriados. O
+acesso externo passa pelo Ingress, que aparece logo em seguida."
+
+========================================================================
+B5 — 11:57–12:28 — máx. 25 s
+Tela: ClusterSecretStore Valid e os 4 ExternalSecrets SecretSynced.
+========================================================================
+"Os segredos ficam no AWS Secrets Manager. O External Secrets Operator lê esses valores
+com a LabRole dos nós e cria os Secrets do Kubernetes: o ClusterSecretStore está Valid e
+os quatro ExternalSecrets estão sincronizados. No Secret, os valores ficam em Base64,
+que é só codificação, não criptografia; por isso mostramos apenas nomes e status."
+
+========================================================================
+B6 — 12:28–12:35 — máx. 9 s
+Tela: conteúdo do ConfigMap evaluation-config.
+========================================================================
+"Já o ConfigMap guarda o que não é sensível: a porta, a região, as URLs internas do
+flag e do targeting e a URL da fila SQS."
+
+========================================================================
+B7 — 12:35–12:45 — máx. 13 s
+Tela: kubectl get ingress (endereço do Load Balancer) e o Service do ingress-nginx.
+========================================================================
+"Os Ingress definem as rotas /auth, /flags, /rules e /evaluate, todas no mesmo Load
+Balancer criado pelo Service do Nginx Ingress Controller. O analytics não tem rota
+porque é um worker interno."
+
+========================================================================
+B8 — 12:45–12:53 — máx. 6 s
+Tela: os 5 pods Running.
+========================================================================
+"E aqui estão os cinco microsserviços rodando como pods, todos Running e prontos."
+
+========================================================================
+B9 — 12:53–13:00 — máx. 14 s
+Tela: resultado do teste: LoadBalancer, Flag, EvaluationResult True, DynamoDBItems 1.
+========================================================================
+"Para provar o Ingress, o teste chamou a API pelo endereço do Load Balancer: criou uma
+chave de API, uma flag e uma regra, e o /evaluate respondeu true. O evento dessa
+avaliação também chegou ao DynamoDB."
+
+========================================================================
+B10 — 13:00–13:33 — máx. 27 s
+Tela: tabela do HPA antes da carga e "Criando 2 pods temporários de carga".
+========================================================================
+"Agora o item 5, escalabilidade. O HPA do evaluation usa a média de CPU em relação ao
+request: o alvo é 30%, com no mínimo uma e no máximo cinco réplicas. O enunciado cita
+70% como exemplo; usamos 30% para a escala aparecer com a carga do laboratório. Para
+gerar carga, o script cria dois pods temporários que chamam o /evaluate sem parar."
+
+========================================================================
+B11 — 13:33–14:08 — máx. 20 s
+Tela: linha do tempo "DURANTE A CARGA".
+========================================================================
+"Enquanto a carga roda, a linha do tempo mostra a CPU e as réplicas a cada consulta.
+É o cenário de um pico de acesso: em vez de o serviço ficar lento ou cair, o Kubernetes
+cria mais pods para dividir as requisições."
+
+========================================================================
+B12 — 14:08–14:27 — máx. 17 s
+Tela: "HPA solicitou múltiplas réplicas" e o RESULTADO (scale-out True, máximo 2).
+========================================================================
+"Aqui está o scale-out: a CPU do evaluation chegou a 59%, acima do alvo de 30%, e o HPA
+pediu duas réplicas. No resumo, o scale-out foi confirmado com no máximo duas réplicas
+e, quando a carga terminou, o serviço voltou para uma réplica."
+
+========================================================================
+B13 — 14:27–14:32 — máx. 4 s
+Tela: Get-Date.
+========================================================================
+"Este é o registro da data e hora da coleta."
+
+========================================================================
+B14 — 15:35–16:26 — máx. 42 s
+Tela: terminal com kubectl get hpa -A e os Deployments.
+========================================================================
+"Sobre os desafios: começamos numa conta pessoal, mas ela só permitia criar um banco
+RDS e precisávamos de três, então migramos para o AWS Academy. No laboratório não dá
+para criar roles do IAM, então usamos a LabRole em tudo. Os pods usam as credenciais
+do nó, o que exigiu ajustar o hop limit para 2. Quando a sessão do laboratório expira,
+os nós podem ser recriados: os novos sobem com o laboratório bloqueado, não entram no
+cluster e voltam sem esse ajuste, então tivemos que corrigir e reiniciar os nós. E no
+primeiro laboratório os créditos acabaram em dois dias, e montamos tudo de novo."
+
+========================================================================
+B15 — 17:59–18:24 — máx. 16 s
+Tela: slide de título com os nomes do grupo.
+========================================================================
+"Com isso, apresentamos a solução seguindo os cinco itens do Tech Challenge:
+conteinerização, infraestrutura na AWS, configuração do cluster, manifestos e
+escalabilidade. Os scripts e as evidências estão no repositório. Obrigado!"

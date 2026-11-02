@@ -1,0 +1,43 @@
+TOGGLEMASTER - EVIDÊNCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Região: us-east-1 | Data: 2026-10-30 22:05:19 -03:00
+
+Load Balancer do ingress-nginx
+==============================
+
+Comando equivalente:
+aws elb describe-load-balancers / describe-instance-health
+
+Saída:
+[
+    {
+        "Name": "a5bc56a01f92c4e85887af601f04b84e",
+        "DNSName": "a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com",
+        "Scheme": "internet-facing",
+        "VpcId": "vpc-09d66ad83422a42ee",
+        "Ports": [
+            443,
+            80
+        ],
+        "Instances": [
+            "i-01353f3211391e088",
+            "i-0155295866911cdc7"
+        ],
+        "SecurityGroups": [
+            "sg-01d2e25d53c914258"
+        ]
+    }
+]
+---------------------------------------------------------------------
+|                      DescribeInstanceHealth                       |
++-------------------------------------------------------------------+
+||                         InstanceStates                          ||
+|+-------------+-----------------------+-------------+-------------+|
+|| Description |      InstanceId       | ReasonCode  |    State    ||
+|+-------------+-----------------------+-------------+-------------+|
+||  N/A        |  i-01353f3211391e088  |  N/A        |  InService  ||
+||  N/A        |  i-0155295866911cdc7  |  N/A        |  InService  ||
+|+-------------+-----------------------+-------------+-------------+|
+NAME                                  TYPE           CLUSTER-IP     EXTERNAL-IP                                                               PORT(S)                      AGE    SELECTOR
+my-release-ingress-nginx-controller   LoadBalancer   172.20.18.66   a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com   80:32022/TCP,443:31841/TCP   167m   app.kubernetes.io/component=controller,app.kubernetes.io/instance=my-release,app.kubernetes.io/name=ingress-nginx
+
+Observação: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.

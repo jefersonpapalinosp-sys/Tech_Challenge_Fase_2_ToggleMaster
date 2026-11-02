@@ -1,0 +1,144 @@
+{
+  "info": {
+    "_postman_id": "90bb3ef8-b6cc-49c4-9832-968784488a4c",
+    "name": "ToggleMaster - API Completa AWS",
+    "description": "Coleção funcional dos cinco serviços do ToggleMaster. A criação da API key salva automaticamente o valor em api_key no ambiente selecionado.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 - Auth Service",
+      "item": [
+        {
+          "name": "Health do Auth",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Auth saudável', () => pm.response.to.have.status(200));"]}}],
+          "request": {"method":"GET","header":[],"url":{"raw":"{{base_url}}/auth/health","host":["{{base_url}}"],"path":["auth","health"]}}
+        },
+        {
+          "name": "Criar API key para Postman",
+          "event": [
+            {"listen":"prerequest","script":{"type":"text/javascript","exec":["if (!pm.environment.get('master_key')) {","    throw new Error('Defina master_key no ambiente antes de criar uma API key.');","}"]}},
+            {"listen":"test","script":{"type":"text/javascript","exec":["pm.test('API key criada', () => pm.response.to.have.status(201));","if (pm.response.code === 201) {","    const body = pm.response.json();","    pm.expect(body.key).to.match(/^tm_key_/);","    pm.environment.set('api_key', body.key);","    console.log('API key salva na variável secreta api_key do ambiente.');","}"]}}
+          ],
+          "request": {
+            "method":"POST",
+            "header":[{"key":"Authorization","value":"Bearer {{master_key}}","type":"text"},{"key":"Content-Type","value":"application/json","type":"text"}],
+            "body":{"mode":"raw","raw":"{\n  \"name\": \"postman-{{$timestamp}}\"\n}","options":{"raw":{"language":"json"}}},
+            "url":{"raw":"{{base_url}}/auth/admin/keys","host":["{{base_url}}"],"path":["auth","admin","keys"]}
+          }
+        },
+        {
+          "name": "Validar API key",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('API key válida', () => pm.response.to.have.status(200));"]}}],
+          "request": {"method":"GET","header":[{"key":"Authorization","value":"Bearer {{api_key}}","type":"text"}],"url":{"raw":"{{base_url}}/auth/validate","host":["{{base_url}}"],"path":["auth","validate"]}}
+        }
+      ]
+    },
+    {
+      "name": "01 - Preparar flag e regra",
+      "item": [
+        {
+          "name": "Criar flag",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Flag criada ou existente', () => pm.expect(pm.response.code).to.be.oneOf([201, 409]));"]}}],
+          "request": {
+            "method":"POST",
+            "header":[{"key":"Authorization","value":"Bearer {{api_key}}","type":"text"},{"key":"Content-Type","value":"application/json","type":"text"}],
+            "body":{"mode":"raw","raw":"{\n  \"name\": \"{{flag_name}}\",\n  \"description\": \"Flag criada pela coleção completa do Postman\",\n  \"is_enabled\": true\n}","options":{"raw":{"language":"json"}}},
+            "url":{"raw":"{{base_url}}/flags","host":["{{base_url}}"],"path":["flags"]}
+          }
+        },
+        {
+          "name": "Criar regra 100%",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Regra criada ou existente', () => pm.expect(pm.response.code).to.be.oneOf([201, 409]));"]}}],
+          "request": {
+            "method":"POST",
+            "header":[{"key":"Authorization","value":"Bearer {{api_key}}","type":"text"},{"key":"Content-Type","value":"application/json","type":"text"}],
+            "body":{"mode":"raw","raw":"{\n  \"flag_name\": \"{{flag_name}}\",\n  \"is_enabled\": true,\n  \"rules\": {\n    \"type\": \"PERCENTAGE\",\n    \"value\": 100\n  }\n}","options":{"raw":{"language":"json"}}},
+            "url":{"raw":"{{base_url}}/rules","host":["{{base_url}}"],"path":["rules"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Flag Service",
+      "item": [
+        {
+          "name": "Listar flags",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Flags retornadas', () => pm.response.to.have.status(200));"]}}],
+          "request": {"method":"GET","header":[{"key":"Authorization","value":"Bearer {{api_key}}","type":"text"}],"url":{"raw":"{{base_url}}/flags","host":["{{base_url}}"],"path":["flags"]}}
+        },
+        {
+          "name": "Consultar flag",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Flag encontrada', () => pm.response.to.have.status(200));"]}}],
+          "request": {"method":"GET","header":[{"key":"Authorization","value":"Bearer {{api_key}}","type":"text"}],"url":{"raw":"{{base_url}}/flags/{{flag_name}}","host":["{{base_url}}"],"path":["flags","{{flag_name}}"]}}
+        },
+        {
+          "name": "Atualizar flag",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Flag atualizada', () => pm.response.to.have.status(200));"]}}],
+          "request": {
+            "method":"PUT",
+            "header":[{"key":"Authorization","value":"Bearer {{api_key}}","type":"text"},{"key":"Content-Type","value":"application/json","type":"text"}],
+            "body":{"mode":"raw","raw":"{\n  \"description\": \"Flag atualizada pelo Postman\",\n  \"is_enabled\": true\n}","options":{"raw":{"language":"json"}}},
+            "url":{"raw":"{{base_url}}/flags/{{flag_name}}","host":["{{base_url}}"],"path":["flags","{{flag_name}}"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Targeting Service",
+      "item": [
+        {
+          "name": "Consultar regra",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Regra encontrada', () => pm.response.to.have.status(200));"]}}],
+          "request": {"method":"GET","header":[{"key":"Authorization","value":"Bearer {{api_key}}","type":"text"}],"url":{"raw":"{{base_url}}/rules/{{flag_name}}","host":["{{base_url}}"],"path":["rules","{{flag_name}}"]}}
+        },
+        {
+          "name": "Atualizar regra",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Regra atualizada', () => pm.response.to.have.status(200));"]}}],
+          "request": {
+            "method":"PUT",
+            "header":[{"key":"Authorization","value":"Bearer {{api_key}}","type":"text"},{"key":"Content-Type","value":"application/json","type":"text"}],
+            "body":{"mode":"raw","raw":"{\n  \"is_enabled\": true,\n  \"rules\": {\n    \"type\": \"PERCENTAGE\",\n    \"value\": 100\n  }\n}","options":{"raw":{"language":"json"}}},
+            "url":{"raw":"{{base_url}}/rules/{{flag_name}}","host":["{{base_url}}"],"path":["rules","{{flag_name}}"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Evaluation Service",
+      "item": [
+        {
+          "name": "Avaliar flag",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Evaluation respondeu 200', () => pm.response.to.have.status(200));","pm.test('Resultado verdadeiro', () => pm.expect(pm.response.json().result).to.eql(true));"]}}],
+          "request": {"method":"GET","header":[],"url":{"raw":"{{base_url}}/evaluate?user_id={{user_id}}&flag_name={{flag_name}}","host":["{{base_url}}"],"path":["evaluate"],"query":[{"key":"user_id","value":"{{user_id}}"},{"key":"flag_name","value":"{{flag_name}}"}]}}
+        }
+      ]
+    },
+    {
+      "name": "05 - Analytics Service (port-forward)",
+      "description": "Antes de enviar, execute: kubectl port-forward -n analytics-service service/analytics-service 8005:8005",
+      "item": [
+        {
+          "name": "Health do Analytics",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Analytics saudável', () => pm.response.to.have.status(200));"]}}],
+          "request": {"method":"GET","header":[],"url":{"raw":"{{analytics_url}}/health","host":["{{analytics_url}}"],"path":["health"]}}
+        }
+      ]
+    },
+    {
+      "name": "99 - Limpeza",
+      "item": [
+        {
+          "name": "Excluir regra",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Regra removida ou inexistente', () => pm.expect(pm.response.code).to.be.oneOf([204, 404]));"]}}],
+          "request": {"method":"DELETE","header":[{"key":"Authorization","value":"Bearer {{api_key}}","type":"text"}],"url":{"raw":"{{base_url}}/rules/{{flag_name}}","host":["{{base_url}}"],"path":["rules","{{flag_name}}"]}}
+        },
+        {
+          "name": "Excluir flag",
+          "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Flag removida ou inexistente', () => pm.expect(pm.response.code).to.be.oneOf([204, 404]));"]}}],
+          "request": {"method":"DELETE","header":[{"key":"Authorization","value":"Bearer {{api_key}}","type":"text"}],"url":{"raw":"{{base_url}}/flags/{{flag_name}}","host":["{{base_url}}"],"path":["flags","{{flag_name}}"]}}
+        }
+      ]
+    }
+  ]
+}

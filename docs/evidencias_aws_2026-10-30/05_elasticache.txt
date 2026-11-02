@@ -1,0 +1,25 @@
+TOGGLEMASTER - EVIDÊNCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Região: us-east-1 | Data: 2026-10-30 22:04:55 -03:00
+
+ElastiCache Redis com TLS e autenticação
+========================================
+
+Comando equivalente:
+aws elasticache describe-replication-groups
+
+Saída:
+-------------------------------------------------------------------------------------
+|                             DescribeReplicationGroups                             |
++--------------------+--------------------------------------------------------------+
+|  AtRestEncryption  |  True                                                        |
+|  AuthTokenEnabled  |  True                                                        |
+|  ClusterEnabled    |  True                                                        |
+|  Endpoint          |  clustercfg.redisevaluation.ymqqul.use1.cache.amazonaws.com  |
+|  Id                |  redisevaluation                                             |
+|  Port              |  6379                                                        |
+|  Shards            |  1                                                           |
+|  Status            |  available                                                   |
+|  TransitEncryption |  True                                                        |
++--------------------+--------------------------------------------------------------+
+
+Observação: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.

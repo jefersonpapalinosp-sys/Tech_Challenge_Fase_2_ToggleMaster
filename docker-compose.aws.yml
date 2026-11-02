@@ -1,11 +1,11 @@
 name: togglemaster-aws
 
 # Este Compose usa somente serviços gerenciados da AWS para dados.
-# Execute-o em uma máquina com rota para a VPC vpc-0ecf1861ef9b39911
+# Execute-o em uma máquina com rota para a VPC vpc-09d66ad83422a42ee
 # (por exemplo, uma EC2 na VPC). Os RDS e o ElastiCache não são públicos.
 services:
   auth-service:
-    image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/auth-service:v1
+    image: 533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/auth-service:v1
     pull_policy: always
     environment:
       PORT: "8001"
@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
   flag-service:
-    image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/flag-service:v1
+    image: 533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/lag-service:v1
     pull_policy: always
     environment:
       PORT: "8002"
@@ -40,7 +40,7 @@ services:
     restart: unless-stopped
 
   targeting-service:
-    image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/targeting-service:v1
+    image: 533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/targeting-service:v1
     pull_policy: always
     environment:
       PORT: "8003"
@@ -59,7 +59,7 @@ services:
     restart: unless-stopped
 
   evaluation-service:
-    image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/evaluation-service:v3
+    image: 533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/evaluation-service:v3
     pull_policy: always
     environment:
       PORT: "8004"
@@ -69,7 +69,7 @@ services:
       TARGETING_SERVICE_URL: http://targeting-service:8003
       SERVICE_API_KEY: ${SERVICE_API_KEY:?Defina SERVICE_API_KEY em .env.aws}
       AWS_REGION: us-east-1
-      AWS_SQS_URL: https://sqs.us-east-1.amazonaws.com/058264096738/evaluation-analytics-queue
+      AWS_SQS_URL: https://sqs.us-east-1.amazonaws.com/533267349027/tgmqueue
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN:-}
@@ -88,12 +88,12 @@ services:
     restart: unless-stopped
 
   analytics-service:
-    image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/analytics-service:v1
+    image: 533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/analytics-service:v1
     pull_policy: always
     environment:
       PORT: "8005"
       AWS_REGION: us-east-1
-      AWS_SQS_URL: https://sqs.us-east-1.amazonaws.com/058264096738/evaluation-analytics-queue
+      AWS_SQS_URL: https://sqs.us-east-1.amazonaws.com/533267349027/tgmqueue
       AWS_DYNAMODB_TABLE: ToggleMasterAnalytics
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}

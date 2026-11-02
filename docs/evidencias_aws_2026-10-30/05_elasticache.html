@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; background: #0f172a; color: #e5e7eb; }
+  body { padding: 34px; font-family: Consolas, "Cascadia Mono", monospace; }
+  .frame { border: 1px solid #334155; border-radius: 14px; overflow: hidden; box-shadow: 0 14px 36px rgba(0,0,0,.35); }
+  .bar { background: #172033; padding: 16px 22px; color: #ffb347; font: 700 20px Arial, sans-serif; border-bottom: 1px solid #334155; }
+  pre { margin: 0; padding: 24px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 16px; line-height: 1.38; }
+</style>
+</head>
+<body><div class="frame"><div class="bar">AWS • ToggleMaster • Evidência técnica</div><pre>TOGGLEMASTER - EVID&#202;NCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Regi&#227;o: us-east-1 | Data: 2026-10-30 22:04:55 -03:00
+
+ElastiCache Redis com TLS e autentica&#231;&#227;o
+========================================
+
+Comando equivalente:
+aws elasticache describe-replication-groups
+
+Sa&#237;da:
+-------------------------------------------------------------------------------------
+|                             DescribeReplicationGroups                             |
++--------------------+--------------------------------------------------------------+
+|  AtRestEncryption  |  True                                                        |
+|  AuthTokenEnabled  |  True                                                        |
+|  ClusterEnabled    |  True                                                        |
+|  Endpoint          |  clustercfg.redisevaluation.ymqqul.use1.cache.amazonaws.com  |
+|  Id                |  redisevaluation                                             |
+|  Port              |  6379                                                        |
+|  Shards            |  1                                                           |
+|  Status            |  available                                                   |
+|  TransitEncryption |  True                                                        |
++--------------------+--------------------------------------------------------------+
+
+Observa&#231;&#227;o: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.</pre></div></body>
+</html>

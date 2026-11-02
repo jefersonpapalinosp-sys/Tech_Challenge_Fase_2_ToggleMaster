@@ -1,0 +1,144 @@
+COMANDOS DOS APRESENTADORES A E B — POWERSHELL / WINDOWS
+Sequência: itens 1 a 5 do enunciado; ver 07_ORDEM_DO_ENUNCIADO.txt.
+A executa os blocos 00–03; B prepara sua sessão com 00 e executa 04–08.
+Executar um bloco por vez. Caminhos abaixo partem da raiz do projeto.
+A pasta apresentacao é um kit de gravação; o código completo continua na raiz.
+Fazer a preparação fora da gravação. Não abrir .env nem arquivos de credenciais.
+
+00 — ABRIR O PROJETO E PREPARAR AWS
+Set-Location 'C:\Users\Jeferson\Desktop\Fase 2 Tech FIAP'
+. .\apresentacao\scripts\01-preparar-sessao.ps1
+
+O ponto + espaço importa a sessão no terminal atual. Repetir em cada terminal.
+O script lê docs\LAB 2.txt sem imprimir valores, valida conta e usa kubeconfig
+isolado em TEMP. Pré-requisitos: AWS CLI, kubectl, Docker Desktop (parte local).
+As credenciais atualizadas precisam permanecer fora da pasta de apresentação.
+
+01 — ITEM 1 / DEIXA 5: SUBIR OS NOVE CONTAINERS LOCAIS
+docker compose up -d --build --wait --wait-timeout 240
+docker compose ps
+
+Não usar docker-compose.aws.yml aqui: esse é outro cenário, local apontando AWS.
+Se houver containers desse outro cenário nas mesmas portas, resolver o conflito
+antes do vídeo. Não apagar volumes para gravar. Cortar a espera do build na edição.
+
+02 — ITEM 1 / DEIXAS 4 E 6: IMAGENS E HEALTH CHECKS
+Usar docker images na deixa 4; subir o Compose no bloco 01 para a deixa 5;
+executar os health checks abaixo na deixa 6.
+docker images --format '{{.Repository}}:{{.Tag}} {{.Size}}' | Select-String 'togglemaster/'
+foreach ($service in @('auth-service','flag-service','targeting-service','evaluation-service','analytics-service')) {
+    $ports = @{ 'auth-service'=8001; 'flag-service'=8002; 'targeting-service'=8003; 'evaluation-service'=8004; 'analytics-service'=8005 }
+    $published = @(docker compose port $service $ports[$service])[0]
+    if ($LASTEXITCODE -ne 0 -or -not $published) { throw "Porta ausente: $service" }
+    $port = ($published -split ':')[-1]
+    $health = Invoke-RestMethod "http://localhost:$port/health" -TimeoutSec 10
+    [pscustomobject]@{ Service=$service; HostPort=$port; Status=$health.status }
+}
+
+ITEM 2 / DEIXAS 7–15 — ABRIR EVIDÊNCIAS E REFERÊNCIAS
+Mostrar 02 EKS -> 03 ECR -> 04 RDS -> 05 Redis -> 07 DynamoDB -> 06 SQS ->
+08 Security Groups -> 06_URLS_E_NOMES_DO_LAB.txt.
+Abrir 04_SLIDES.html no navegador e apertar F11. Setas direita/esquerda navegam.
+Abrir evidencias\13_hpa_antes_durante_depois.html; ajustar zoom/rolar para cada etapa.
+O PDF 04_SLIDES.pdf permite apresentar offline sem navegador.
+
+03 — ITEM 3 / DEIXAS 16–17: METRICS SERVER E NGINX
+kubectl get deployment metrics-server -n kube-system
+kubectl top nodes
+kubectl top pods -A
+helm list -n ingress-nginx
+kubectl get deployment,pods,services -n ingress-nginx
+
+Helm precisa estar instalado no computador para listar as releases.
+Se as métricas estiverem indisponíveis, resolver antes da demonstração de HPA.
+Este bloco inspeciona o que está instalado; não reinstala os componentes.
+
+04 — ITEM 4 / DEIXAS 19–26: MANIFESTOS E ESTADO AWS
+kubectl config current-context
+kubectl get nodes
+kubectl get namespaces
+kubectl get deployments -A -l app.kubernetes.io/part-of=togglemaster
+foreach ($ns in @('auth-service','flag-service','targeting-service','evaluation-service','analytics-service')) { kubectl get svc -n $ns }
+kubectl get externalsecret -A
+kubectl get clustersecretstore
+kubectl get configmap evaluation-config -n evaluation-service
+kubectl get ingress -A
+kubectl get service my-release-ingress-nginx-controller -n ingress-nginx
+kubectl get jobs -A
+kubectl get pods -A -l app.kubernetes.io/part-of=togglemaster
+
+Na apresentação, seguir: Namespace (19), Deployment (20), Service (21),
+Secret/ExternalSecret (22), ConfigMap (23), Ingress (24), boas práticas (25),
+Jobs e pods (26). Mostrar exemplos em apoio_codigo, sem aplicar esses recortes.
+Não mostrar valores de Secrets ou executar kubectl get secret -o yaml.
+
+Esperado: dois nós Ready, cinco Deployments disponíveis, ExternalSecrets Ready.
+Se algum Service não aparecer por ausência de label:
+foreach ($ns in @('auth-service','flag-service','targeting-service','evaluation-service','analytics-service')) { kubectl get svc -n $ns }
+
+05 — ITEM 4 / DEIXA 27: FLUXO FUNCIONAL PELO INGRESS
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-aws-deployment.ps1
+
+Esse script já existe no projeto: cria API key, flag e regra com nome único,
+consulta /evaluate e procura o mesmo flag_name no DynamoDB. Mostrar o resumo
+EvaluationResult=True e DynamoDBItems maior que zero. Os cadastros ficam no LAB;
+o script não os apaga. Não mostrar a chave retornada pela API.
+Alternativa Postman: importar os dois JSONs da pasta postman do kit.
+Preparar api_key secreta fora da gravação; usar flag_name exclusivo.
+Executar validar chave -> criar flag -> criar regra -> avaliar flag, nessa ordem.
+401: autenticação inválida; 409: nome já existente; escolher outro nome.
+
+06 — ITEM 5 / DEIXAS 28–32: HPAs E CARGA EVALUATION
+Deixa 28: evaluation-hpa.yaml. Deixa 29: analytics-hpa.yaml.
+Deixa 30: justificar HPA por CPU no Academy e explicar KEDA como alternativa.
+Deixas 31–32: demonstração evaluation antes, durante e depois.
+kubectl top nodes
+kubectl top pods -A
+kubectl get hpa -A
+
+Para narrar o ensaio já feito, abrir evidência 13. Para um novo ensaio ao vivo:
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\export-hpa-evidence.ps1 -FlagName load-postman-fiap -LoadPods 2 -LoadSeconds 240
+
+Requer load-postman-fiap habilitada e regra de 100%. O script cria e remove seus
+pods de carga e espera scale-in. Pode substituir a captura na pasta docs; os
+arquivos copiados para apresentacao são uma fotografia independente da coleta.
+Se a flag não existir, preparar no Postman e passar esse nome em -FlagName.
+
+Em OUTROS terminais preparados com o bloco 00:
+kubectl get hpa -n evaluation-service -w
+kubectl get pods -n evaluation-service -l app=evaluation-service -w
+
+Ctrl+C encerra apenas o watch. O gerador possui tempo limitado e limpeza própria.
+
+07 — DEIXAS 33–35: SQS -> ANALYTICS -> DYNAMODB
+Deixa 33: envio manual. Deixa 34: scale-out analytics (PENDENTE).
+Deixa 35: correlacionar eventos persistidos no DynamoDB.
+Antes: registrar horário, HPA e pods. Abrir dois terminais com:
+kubectl get hpa -n analytics-service -w
+kubectl get pods -n analytics-service -l app=analytics-service -w
+
+No terminal principal preparado, enviar 100 eventos sintéticos controlados:
+.\apresentacao\scripts\03-enviar-eventos-sqs.ps1 -Count 100
+
+O script imprime um RunId, que também é o flag_name dos eventos sintéticos.
+As mensagens são reais e o worker as grava no DynamoDB. Não é tráfego HTTP.
+O volume inicial não garante escala; a CPU precisa ultrapassar 30% do request.
+Se permanecer em 1 réplica, a prova de escala continua pendente. Interromper o
+ensaio e analisar métricas antes de aumentar carga. Não alterar réplicas manualmente.
+
+No Console DynamoDB: Explore items -> ToggleMasterAnalytics -> filtrar flag_name
+igual ao RunId impresso. Mostrar user_id, flag_name, result, timestamp, event_id.
+Alternativa CLI (substituir SOMENTE o marcador pelo RunId real):
+$runId = 'SUBSTITUIR_PELO_RUNID'
+$scan = aws dynamodb scan --table-name ToggleMasterAnalytics --region us-east-1 --output json | ConvertFrom-Json
+if ($LASTEXITCODE -ne 0) { throw 'Falha no scan' }
+$scan.Items | Where-Object { $_.flag_name.S -eq $runId } | ForEach-Object { [pscustomobject]@{ event_id=$_.event_id.S; flag_name=$_.flag_name.S; user_id=$_.user_id.S; result=$_.result.BOOL; timestamp=$_.timestamp.S } }
+
+O scan acima lê a tabela inteira: usar somente no laboratório pequeno.
+Não gravar a fala de analytics escalando sem múltiplas réplicas Ready observadas.
+
+08 — ENCERRAMENTO
+kubectl get hpa -A
+kubectl get deployments -A -l app.kubernetes.io/part-of=togglemaster
+Confirmar que a carga terminou e registrar retorno ao mínimo.
+Não encerrar o Lab antes de salvar a gravação e todas as evidências necessárias.

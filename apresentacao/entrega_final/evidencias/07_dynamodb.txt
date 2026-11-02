@@ -1,0 +1,34 @@
+TOGGLEMASTER - EVIDÊNCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Região: us-east-1 | Data: 2026-10-30 22:04:59 -03:00
+
+Tabela DynamoDB ToggleMasterAnalytics
+=====================================
+
+Comando equivalente:
+aws dynamodb describe-table
+
+Saída:
+{
+    "Name": "ToggleMasterAnalytics",
+    "Status": "ACTIVE",
+    "BillingMode": "PAY_PER_REQUEST",
+    "ItemCount": 0,
+    "SizeBytes": 0,
+    "KeySchema": [
+        {
+            "AttributeName": "event_id",
+            "KeyType": "HASH"
+        }
+    ],
+    "Encryption": null,
+    "Arn": "arn:aws:dynamodb:us-east-1:533267349027:table/ToggleMasterAnalytics"
+}
+---------------------------------------------------
+|                      Scan                       |
++--------------------+-----------------+----------+
+|        Flag        |  MatchingItems  | Scanned  |
++--------------------+-----------------+----------+
+|  load-postman-fiap |  4              |  13      |
++--------------------+-----------------+----------+
+
+Observação: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.

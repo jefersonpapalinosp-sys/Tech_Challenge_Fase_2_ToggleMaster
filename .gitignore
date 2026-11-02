@@ -26,7 +26,21 @@ docker-compose.override.yml
 # Ferramentas locais baixadas pelos scripts
 tools/
 
+# Pacote compartilhável contém credenciais reais do AWS Academy
+subir_local_toggle_master_aws/
+
 # Pacotes e documentos usados somente como referência local
 k8s-aws.zip
 docs/POSTECH - Tech Challenge - Fase 2.pdf
 docs/Tech_Challenge_Fase_1_ToggleMaster.pdf
+
+# Credenciais do laboratorio, arquivos de trabalho e pacotes locais
+docs/LAB*.txt
+docs/AWS LAB*.txt
+*.zip
+~$*
+docs/historico/
+k8s-aws/togglemaster-render.yaml
+
+# Gravacoes e videos editados (grandes demais para o git)
+*.mp4

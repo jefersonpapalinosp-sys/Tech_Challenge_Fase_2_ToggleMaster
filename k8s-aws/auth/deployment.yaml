@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: auth-service
-          image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/auth-service:v1
+          image: 533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/auth-service:v1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

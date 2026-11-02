@@ -1,0 +1,148 @@
+# PARTE B — DEIXAS 19 A 37 — POWERSHELL
+# Copiar UM BLOCO POR VEZ para o terminal do VS Code e pressionar Enter.
+# Nao executar o arquivo inteiro de uma vez. Se aparecer erro, parar nesse bloco.
+# Os comentarios com # explicam o que mostrar; nao precisam ser lidos no video.
+# A preparacao e feita antes da gravacao. Os testes 09, 12 e 13 geram dados/carga reais.
+# Testes demorados devem ser ensaiados; cortar esperas na edicao.
+
+# 00 — PREPARACAO (antes de gravar)
+# Lab ativo, docs\LAB 2.txt atualizado. Repetir em cada novo terminal.
+Set-Location 'C:\Users\Jeferson\Desktop\Fase 2 Tech FIAP'
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+. .\apresentacao\scripts\01-preparar-sessao.ps1
+cls
+
+# 01 — DEIXA 19: CONTEXTO, NOS E NAMESPACES
+# Mostrar tambem flag-kustomization.yaml no editor.
+kubectl config current-context
+kubectl get nodes
+kubectl get namespaces
+
+# 02 — DEIXA 20: DEPLOYMENTS
+# Mostrar flag-deployment.yaml no editor: imagem ECR e replicas.
+kubectl get deployments -A -l app.kubernetes.io/part-of=togglemaster
+
+# 03 — DEIXA 21: SERVICES CLUSTERIP
+kubectl get services -n auth-service
+kubectl get services -n flag-service
+kubectl get services -n targeting-service
+kubectl get services -n evaluation-service
+kubectl get services -n analytics-service
+
+# 04 — DEIXA 22: SECRET STORE E EXTERNALSECRETS
+# Esperado: store Valid e ExternalSecrets SecretSynced / Ready True.
+# Nao executar get secret -o yaml nem abrir valores de segredos.
+kubectl get clustersecretstore
+kubectl get externalsecret -A
+
+# 05 — DEIXA 23: CONFIGMAP
+# O YAML abaixo e a copia revisada sem senhas, para mostrar no editor/terminal.
+Get-Content .\apresentacao\apoio_codigo\evaluation-configmap.yaml
+kubectl get configmap evaluation-config -n evaluation-service
+
+# 06 — DEIXA 24: INGRESS E LOAD BALANCER
+# Mostrar auth-ingress.yaml no editor.
+kubectl get ingress -A
+kubectl get service my-release-ingress-nginx-controller -n ingress-nginx
+
+# 07 — DEIXA 25: BOAS PRATICAS
+# Sem comando obrigatorio: abrir flag-deployment.yaml e mostrar probes,
+# resources.requests, resources.limits e securityContext. Nao aplicar o YAML.
+
+# 08 — DEIXA 26: JOBS E PODS
+# Jobs ausentes nao comprovam conclusao: narrar somente o observado.
+# Esperado para apps: cinco servicos com pods Ready, sem CrashLoopBackOff.
+kubectl get jobs -A
+kubectl get pods -A -l app.kubernetes.io/part-of=togglemaster
+
+# 09 — DEIXA 27: TESTE FUNCIONAL PELO LOAD BALANCER
+# Cria API key, flag/regra exclusivas; avalia e procura evento no DynamoDB.
+# Executado em processo separado para preservar o contexto deste terminal.
+# Cadastros ficam no LAB. A chave criada nao aparece no resumo.
+# Guardamos a flag criada para reutiliza-la no teste HPA (bloco 12).
+$testeJson = powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& '.\scripts\test-aws-deployment.ps1' | ConvertTo-Json -Compress"
+if ($LASTEXITCODE -ne 0) { throw 'Teste funcional falhou. Nao avance para a carga.' }
+$teste = $testeJson | ConvertFrom-Json
+if (-not $teste.Flag -or $teste.EvaluationResult -ne $true -or $teste.DynamoDBItems -lt 1) { throw 'Teste sem confirmacao ponta a ponta.' }
+$teste | Format-List LoadBalancer,Flag,EvaluationResult,DynamoDBItems
+
+# 10 — DEIXAS 28 E 29: CONFIGURACAO DOS DOIS HPAs
+# Mostrar evaluation-hpa.yaml e analytics-hpa.yaml no editor.
+kubectl get hpa -n evaluation-service
+kubectl get hpa -n analytics-service
+kubectl top nodes
+kubectl top pods -n evaluation-service
+kubectl top pods -n analytics-service
+
+# 11 — DEIXA 30: JUSTIFICATIVA
+# Sem comando: explicar HPA por CPU no Academy; KEDA por fila como alternativa.
+
+# 12 — DEIXAS 31 E 32: CARGA EVALUATION
+# ANTES: abrir OUTRO terminal pelo botao +, repetir o bloco 00 nele e executar:
+# kubectl get hpa -n evaluation-service -w
+# Esse segundo terminal acompanha a escala. Ctrl+C encerra apenas o acompanhamento.
+# VOLTAR A ESTE TERMINAL, onde a variavel $teste existe, e executar:
+if (-not $teste.Flag) { throw 'Execute o bloco 09 neste terminal antes da carga.' }
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\export-hpa-evidence.ps1 -FlagName $teste.Flag -LoadPods 2 -LoadSeconds 240
+if ($LASTEXITCODE -ne 0) { throw 'Coleta HPA falhou. Conferir estado antes de continuar.' }
+
+# Esperar terminar: script gera carga limitada, captura replicas disponiveis,
+# remove seus geradores e espera voltar ao minimo. Pode levar varios minutos.
+# Atualiza a evidencia em docs; a copia em apresentacao permanece historica.
+# Conferir no fim:
+kubectl get hpa -n evaluation-service
+kubectl get pods -n evaluation-service -l app=evaluation-service
+
+# 13 — DEIXA 33: MENSAGENS MANUAIS SQS
+# No SEGUNDO terminal, encerrar o watch anterior com Ctrl+C e executar:
+# kubectl get hpa -n analytics-service -w
+# VOLTAR A ESTE TERMINAL. O comando abaixo envia 100 eventos reais sinteticos.
+# Guardar $envio para correlacionar os eventos no bloco 15.
+Get-Date
+kubectl get hpa -n analytics-service
+kubectl get pods -n analytics-service -l app=analytics-service
+$envio = & .\apresentacao\scripts\03-enviar-eventos-sqs.ps1 -Count 100
+$envio | Format-List RunId,MessagesSent,Queue
+
+# 14 — DEIXA 34: ANALYTICS SOB CARGA (AINDA PENDENTE DE COMPROVACAO)
+# Observar o segundo terminal. Repetir estas consultas durante o processamento.
+kubectl top pods -n analytics-service
+kubectl get hpa -n analytics-service
+kubectl get deployment analytics-service -n analytics-service
+kubectl get pods -n analytics-service -l app=analytics-service
+
+# 100 mensagens nao garantem scale-out por CPU. Se continuar em 1 replica,
+# nao narrar que escalou nem usar kubectl scale para simular a prova.
+# Ensaiar e diagnosticar a metrica antes da gravacao definitiva.
+
+# 15 — DEIXA 35: EVENTOS DO MESMO LOTE NO DYNAMODB
+# Executar no MESMO terminal em que foi criada a variavel $envio.
+# O scan le a tabela: adequado a este LAB pequeno; nao e consulta otimizada.
+if (-not $envio.RunId) { throw 'Execute o bloco 13 neste terminal primeiro.' }
+$dadosJson = aws dynamodb scan --table-name ToggleMasterAnalytics --region us-east-1 --output json
+if ($LASTEXITCODE -ne 0) { throw 'Falha ao consultar DynamoDB.' }
+$dados = $dadosJson | ConvertFrom-Json
+$eventos = @($dados.Items | Where-Object { $_.flag_name.S -eq $envio.RunId })
+$eventos | Select-Object -First 10 | ForEach-Object {
+    [pscustomobject]@{
+        Evento = $_.event_id.S
+        Lote = $_.flag_name.S
+        Usuario = $_.user_id.S
+        Resultado = $_.result.BOOL
+        Data = $_.timestamp.S
+    }
+} | Format-Table -AutoSize
+'Eventos encontrados neste lote: ' + $eventos.Count
+
+# Se retornar zero, aguardar o consumo da fila e repetir o bloco 15.
+# Nao repetir o envio apenas porque o consumidor ainda nao terminou.
+# Esses sao eventos sinteticos SQS; o evento HTTP foi verificado no bloco 09.
+
+# 16 — DEIXAS 36 E 37: CONFERENCIA E ENCERRAMENTO
+# Encerrar o watch no segundo terminal com Ctrl+C.
+kubectl get hpa -A
+kubectl get deployments -A -l app.kubernetes.io/part-of=togglemaster
+
+# Mostrar slides 2/3/6 para arquitetura, armazenamentos e desafios; slide 8 para encerrar.
+# cls limpa a tela a qualquer momento, sem apagar as variaveis.
+# Nao fechar o terminal principal entre os blocos: $teste e $envio ficam nele.

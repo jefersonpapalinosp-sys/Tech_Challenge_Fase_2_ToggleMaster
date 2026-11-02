@@ -1,0 +1,29 @@
+REFERÊNCIAS PARA A GRAVAÇÃO — us-east-1 / conta 533267349027
+Console AWS (sessão autenticada necessária):
+https://us-east-1.console.aws.amazon.com/console/home?region=us-east-1
+Pesquisar cada serviço na barra superior do Console e selecionar o nome abaixo.
+
+EKS: ekstogglemaster
+Managed Node Group: tgmnodegroup
+VPC: vpc-09d66ad83422a42ee
+ECR: namespace/auth-service:v1; namespace/lag-service:v1;
+namespace/targeting-service:v1; namespace/evaluation-service:v3;
+namespace/analytics-service:v1.
+Prefixo ECR: 533267349027.dkr.ecr.us-east-1.amazonaws.com/
+RDS: db-authservice, dbflags, dbtargeting
+Redis: redisevaluation
+SQS: tgmqueue
+DynamoDB: ToggleMasterAnalytics
+Secrets Manager (mostrar nomes, não valores): togglemaster/auth,
+togglemaster/flag, togglemaster/targeting, togglemaster/evaluation.
+
+Base HTTP observada em 30/10/2026:
+http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com
+Validação: http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/auth/validate (Bearer API key)
+Flags: http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/flags (Bearer API key)
+Regras: http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/rules (Bearer API key)
+Avaliação: http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/evaluate?user_id=video-user&flag_name=load-postman-fiap
+Analytics: interno, sem rota pública.
+
+Confirmar DNS atual pelo Service ingress-nginx no bloco 04 dos comandos.
+Não publicar chaves no arquivo nem colar Bearer tokens nas URLs.

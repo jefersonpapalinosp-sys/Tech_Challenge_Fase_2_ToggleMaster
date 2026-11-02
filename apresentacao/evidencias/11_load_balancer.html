@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; background: #0f172a; color: #e5e7eb; }
+  body { padding: 34px; font-family: Consolas, "Cascadia Mono", monospace; }
+  .frame { border: 1px solid #334155; border-radius: 14px; overflow: hidden; box-shadow: 0 14px 36px rgba(0,0,0,.35); }
+  .bar { background: #172033; padding: 16px 22px; color: #ffb347; font: 700 20px Arial, sans-serif; border-bottom: 1px solid #334155; }
+  pre { margin: 0; padding: 24px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 16px; line-height: 1.38; }
+</style>
+</head>
+<body><div class="frame"><div class="bar">AWS • ToggleMaster • Evidência técnica</div><pre>TOGGLEMASTER - EVID&#202;NCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Regi&#227;o: us-east-1 | Data: 2026-10-30 22:05:19 -03:00
+
+Load Balancer do ingress-nginx
+==============================
+
+Comando equivalente:
+aws elb describe-load-balancers / describe-instance-health
+
+Sa&#237;da:
+[
+    {
+        &quot;Name&quot;: &quot;a5bc56a01f92c4e85887af601f04b84e&quot;,
+        &quot;DNSName&quot;: &quot;a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com&quot;,
+        &quot;Scheme&quot;: &quot;internet-facing&quot;,
+        &quot;VpcId&quot;: &quot;vpc-09d66ad83422a42ee&quot;,
+        &quot;Ports&quot;: [
+            443,
+            80
+        ],
+        &quot;Instances&quot;: [
+            &quot;i-01353f3211391e088&quot;,
+            &quot;i-0155295866911cdc7&quot;
+        ],
+        &quot;SecurityGroups&quot;: [
+            &quot;sg-01d2e25d53c914258&quot;
+        ]
+    }
+]
+---------------------------------------------------------------------
+|                      DescribeInstanceHealth                       |
++-------------------------------------------------------------------+
+||                         InstanceStates                          ||
+|+-------------+-----------------------+-------------+-------------+|
+|| Description |      InstanceId       | ReasonCode  |    State    ||
+|+-------------+-----------------------+-------------+-------------+|
+||  N/A        |  i-01353f3211391e088  |  N/A        |  InService  ||
+||  N/A        |  i-0155295866911cdc7  |  N/A        |  InService  ||
+|+-------------+-----------------------+-------------+-------------+|
+NAME                                  TYPE           CLUSTER-IP     EXTERNAL-IP                                                               PORT(S)                      AGE    SELECTOR
+my-release-ingress-nginx-controller   LoadBalancer   172.20.18.66   a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com   80:32022/TCP,443:31841/TCP   167m   app.kubernetes.io/component=controller,app.kubernetes.io/instance=my-release,app.kubernetes.io/name=ingress-nginx
+
+Observa&#231;&#227;o: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.</pre></div></body>
+</html>

@@ -1,22 +1,40 @@
 # Docker Compose usando recursos AWS
 
-O arquivo `docker-compose.aws.yml` contém somente os cinco microsserviços. PostgreSQL, Redis, SQS e DynamoDB apontam para os recursos reais da conta AWS `058264096738` em `us-east-1`.
+O arquivo `docker-compose.aws.yml` contém somente os cinco microsserviços. PostgreSQL, Redis, SQS e DynamoDB apontam para os recursos reais da conta AWS `533267349027` em `us-east-1`.
+
+## Execução local por túnel EKS
+
+Os RDS e o ElastiCache são privados. Para executar os containers no notebook, use o túnel Telepresence preparado no projeto:
+
+```powershell
+.\scripts\start-local-aws-tunnel.ps1
+```
+
+Os serviços ficam disponíveis em `localhost` nas portas `28001` a `28005`. O túnel encaminha DNS e tráfego da VPC `10.0.0.0/16` por meio do EKS, inclusive os endpoints do Redis Cluster.
+
+Para encerrar os containers e a conexão local:
+
+```powershell
+.\scripts\stop-local-aws-tunnel.ps1
+```
+
+O Traffic Manager permanece no namespace `ambassador` para reutilização. As credenciais do AWS Academy continuam temporárias; depois de reiniciar o laboratório, atualize `docs\LAB 2.txt` antes de iniciar novamente.
 
 ## Recursos configurados
 
 | Componente | Recurso AWS |
 |---|---|
-| auth-service | ECR `ecr/auth-service:v1` + RDS `db-auth-service` |
-| flag-service | ECR `ecr/flag-service:v1` + RDS `db-flag-service` |
-| targeting-service | ECR `ecr/targeting-service:v1` + RDS `db-targeting-service` |
-| evaluation-service | ECR `ecr/evaluation-service:v3` + ElastiCache + SQS |
-| analytics-service | ECR `ecr/analytics-service:v1` + SQS + DynamoDB |
-| Fila | `evaluation-analytics-queue` |
+| auth-service | ECR `namespace/auth-service:v1` + RDS `db-authservice` |
+| flag-service | ECR `namespace/lag-service:v1` + RDS `dbflags` |
+| targeting-service | ECR `namespace/targeting-service:v1` + RDS `dbtargeting` |
+| evaluation-service | ECR `namespace/evaluation-service:v3` + ElastiCache + SQS |
+| analytics-service | ECR `namespace/analytics-service:v1` + SQS + DynamoDB |
+| Fila | `tgmqueue` |
 | Tabela | `ToggleMasterAnalytics` |
 
 ## Restrição de rede
 
-Os três RDS têm `PubliclyAccessible=false`, e o ElastiCache também é privado. Portanto, este Compose **não funciona diretamente no notebook**. Execute-o em uma EC2 ou outro host com rota para a VPC `vpc-0ecf1861ef9b39911` e com regras de Security Group liberando 5432 e 6379 a partir desse host.
+Os três RDS têm `PubliclyAccessible=false`, e o ElastiCache também é privado. Portanto, este Compose **não funciona diretamente no notebook**. Execute-o em uma EC2 ou outro host com rota para a VPC `vpc-09d66ad83422a42ee` e com regras de Security Group liberando 5432 e 6379 a partir desse host.
 
 ## Preparação
 
@@ -54,6 +72,6 @@ docker compose --env-file .env.aws -f docker-compose.aws.yml down
 
 - Não existem serviços `postgres-*`, `redis` ou `dynamodb-local` neste Compose.
 - `AWS_SQS_ENDPOINT_URL` e `AWS_DYNAMODB_ENDPOINT_URL` não são definidos; os SDKs usam os endpoints oficiais da AWS.
-- O SQS real é `https://sqs.us-east-1.amazonaws.com/058264096738/evaluation-analytics-queue`.
+- O SQS real é `https://sqs.us-east-1.amazonaws.com/533267349027/tgmqueue`.
 - O ElastiCache exige `rediss://`, token de autenticação e cliente cluster. Por isso o evaluation usa a imagem `v3`, com `go-redis/v9`, e `REDIS_CLUSTER_MODE=true`.
 - Credenciais não ficam no YAML nem no repositório.

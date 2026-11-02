@@ -1,0 +1,56 @@
+VALIDAÇÃO DO PDF ORIGINAL — 30/10/2026
+Arquivo analisado: ToggleMaster_Fase2_Roteiro_Final_Gravacao.pdf (12 páginas).
+Original preservado. Para gravar, usar o arquivo com sufixo _VALIDADO.
+Fontes: PDF original, enunciado (página 9), Dockerfiles, docker-compose.yml,
+k8s-aws, código do evaluation/analytics e 13 evidências datadas de 30/10/2026.
+Esta revisão é documental; não executou nova carga nem consultou a AWS ao vivo.
+
+CORREÇÕES
+Página 4, deixa 8/anexo: portas do host são 18001–18005 por padrão;
+8001–8005 são as portas internas. Consultar docker compose port se .env as alterar.
+Página 6, deixa 16: evaluation-analytics-queue -> tgmqueue.
+Página 6, deixa 17: os Security Groups RDS incluem IP administrativo /32;
+não afirmar acesso exclusivamente do EKS. RDS tem PubliclyAccessible=False.
+Página 7, deixa 20: namespaces terminam em -service; DNS correto:
+flag-service.flag-service.svc.cluster.local.
+Página 8, deixa 25: evidência usa API elb (Classic), não ALB/NLB.
+O enunciado menciona ALB/NLB; registrar a divergência sem ocultá-la.
+Página 9, deixa 29: result:true não garante SQS publicado/persistido;
+o envio usa goroutine e pode falhar depois da resposta. Correlacionar evento.
+Página 9, deixa 33: analytics não escalou no teste registrado. Tem HPA configurado.
+Páginas 11–12: Bash/grep/jq substituídos por instruções PowerShell para este PC.
+Carga: usar namespace evaluation-service e dois geradores; quatro pressionaram
+o ambiente em ensaio anterior. Não aumentar a carga durante a gravação sem ensaio.
+Anexo C1: não executar alteração IMDS como comando de rotina em vídeo.
+Verificar nós atuais e preparar o ambiente fora da gravação.
+O hop limit 2 autoriza acesso dos pods às credenciais do nó; não é isolamento IAM.
+Imagem ECR do flag-service: namespace/lag-service:v1 (nome real, não erro do roteiro).
+
+LIMITES DAS EVIDÊNCIAS
+Arquivos 01–12: coleta anterior à recriação dos nós, aproximadamente 22:04–22:05.
+Arquivo 13: ensaio posterior, 22:32–22:34. Não apresentar como snapshot simultâneo.
+13 mostra 1 -> 2/2 Running -> 3 réplicas na linha do tempo -> 1.
+O campo maxEvaluation=2 é incompleto: o coletor parou de atualizar esse máximo
+depois da primeira fase. Preservamos a saída bruta; a narrativa usa a sequência.
+Analytics permaneceu em uma réplica. A configuração do HPA não prova scale-out.
+07 mostra quatro itens da flag load-postman-fiap, mas não exibe um evento
+correlacionado do teste atual. DescribeTable.ItemCount não substitui um scan/query.
+As imagens foram renderizadas de AWS CLI/kubectl, não do Console autenticado.
+
+PENDÊNCIAS PARA FECHAR O VÍDEO (enunciado, página 9)
+1. Gravar docker compose up e os nove containers locais saudáveis.
+   LocalStack substitui o DynamoDB Local literal do enunciado: adaptação declarada.
+2. Executar e registrar fluxo HTTP com o mesmo identificador no DynamoDB.
+3. Enviar mensagens sintéticas manualmente para tgmqueue e demonstrar
+   analytics-service escalando por CPU. A evidência atual NÃO atende este item.
+   O script 03 suporta o ensaio, mas não garante que 100 mensagens elevarão a CPU.
+4. Verificar Jobs SQL e estado atual do cluster antes de afirmar sucesso ao vivo.
+5. Revisar com o grupo a divergência Classic LB versus ALB/NLB do enunciado.
+6. Ensaiar o tempo: alvo 19 minutos, máximo 20; cortar esperas e trechos opcionais.
+
+FALAS CONDICIONAIS
+Após comprovar escala do analytics, substituir a deixa 34 pela descrição do
+resultado real: CPU observada, réplicas disponíveis e marcador dos eventos.
+Não inventar números nem mostrar kubectl scale manual como decisão do HPA.
+Antes disso, o roteiro está revisado tecnicamente, mas a demonstração continua
+com essa pendência. Corrigir texto não substitui produzir a evidência faltante.

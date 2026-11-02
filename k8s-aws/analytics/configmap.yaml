@@ -6,5 +6,5 @@ metadata:
 data:
   PORT: "8005"
   AWS_REGION: "us-east-1"
-  AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/058264096738/evaluation-analytics-queue"
+  AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/533267349027/tgmqueue"
   AWS_DYNAMODB_TABLE: "ToggleMasterAnalytics"

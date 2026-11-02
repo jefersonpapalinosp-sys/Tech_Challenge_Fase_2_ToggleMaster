@@ -1,0 +1,26 @@
+KIT PARA GRAVAÇÃO — TOGGLEMASTER / FASE 2
+
+1. Ler 01_VALIDACAO_E_PENDENCIAS.txt antes de gravar.
+2. Usar ToggleMaster_Fase2_Roteiro_Final_Gravacao_VALIDADO.pdf (ou .docx).
+   O PDF original foi preservado com o nome anterior; não usar o anexo antigo.
+3. Apresentadores A e B: 02_COMANDOS_EM_ORDEM.txt (PowerShell, um bloco por vez).
+4. Apresentar 04_SLIDES.html (F11 e setas) ou 04_SLIDES.pdf.
+5. Consultar 05_MAPA_DE_TELAS.txt para localizar cada evidência.
+6. evidencias contém 13 PNGs e respectivos HTML/TXT, todos datados.
+7. postman contém coleção de demonstração e ambiente sem credenciais.
+8. apoio_codigo reúne exemplos para mostrar Dockerfiles e Kustomize/probes.
+9. 07_ORDEM_DO_ENUNCIADO.txt relaciona páginas do POSTECH e deixas do roteiro.
+
+IMPORTANTE: falta comprovar o scale-out do analytics por carga no SQS,
+exigido na página 9 do enunciado. O HPA do evaluation já tem evidência.
+Os comandos de ensaio do analytics estão preparados, mas não foram executados
+nesta revisão documental. Não tratar a apresentação como integralmente concluída.
+
+Arquivos 01–12 mostram o LAB antes da recriação dos nós; 13 mostra o ensaio
+posterior. São registros históricos de CLI/kubectl, não capturas atuais do Console.
+O PDF original, de terceiros/usuário, foi mantido sem alterações.
+
+Este kit depende da raiz do projeto para execução; não é um pacote de instalação.
+Não foram copiados .env, LAB 2.txt, kubeconfig ou valores de segredos.
+Nomes dos participantes vieram do roteiro existente; revisar grafia com o grupo.
+Tempo alvo: 19 min, limite: 20 min. Cortar esperas, não etapas de comprovação.

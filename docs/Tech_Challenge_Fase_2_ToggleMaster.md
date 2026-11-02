@@ -11,19 +11,19 @@
 
 | Integrante | RM | Discord |
 |---|---|---|
-| Afonso Victoriano Franco | Preencher antes da entrega | Preencher antes da entrega |
-| Cesar Augusto Ferreira Alves | Preencher antes da entrega | Preencher antes da entrega |
-| Jeferson Lima Papalino | Preencher antes da entrega | Preencher antes da entrega |
-| Jonatas Ariel Nunes | Preencher antes da entrega | Preencher antes da entrega |
-| Willian Felix Corrêa | Preencher antes da entrega | Preencher antes da entrega |
+| Afonso Victoriano Franco | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
+| Cesar Augusto Ferreira Alves | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
+| Jeferson Lima Papalino | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
+| Jonatas Ariel Nunes | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
+| Willian Felix Corrêa | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
 
-> Os números de RM, usernames do Discord, endereço do repositório e link do vídeo não estavam presentes nos arquivos analisados. Esses campos permanecem destacados para preenchimento antes da entrega oficial.
+> O repositório definitivo já foi inserido. Os números de RM, usernames do Discord e o link do vídeo da Fase 2 não aparecem nos artefatos disponíveis e permanecem destacados para preenchimento com dados reais; nenhum identificador foi inventado.
 
 ## 1. Introdução
 
 Na Fase 1, o ToggleMaster foi disponibilizado como uma aplicação monolítica executada em instâncias Amazon EC2 e conectada a um banco PostgreSQL no Amazon RDS. A solução foi adequada para validar o MVP, mas a evolução do volume de acessos e da complexidade funcional passou a exigir componentes independentes, escaláveis e com responsabilidades bem definidas.
 
-Na Fase 2, o sistema foi decomposto em cinco microsserviços: autenticação, gerenciamento de feature flags, regras de segmentação, avaliação de flags e processamento analítico. Cada serviço foi conteinerizado, recebeu configuração própria e passou a ser implantado no Kubernetes. O ambiente de produção acadêmico utiliza Amazon EKS, imagens privadas no Amazon ECR e serviços gerenciados da AWS para persistência, cache e mensageria.
+Na Fase 2, o sistema foi decomposto em cinco microsserviços: autenticação, gerenciamento de feature flags, regras de segmentação, avaliação de flags e processamento analítico. Cada serviço foi conteinerizado, recebeu configuração própria e passou a ser implantado no Kubernetes. O ambiente acadêmico de validação utiliza Amazon EKS, imagens privadas no Amazon ECR e serviços gerenciados da AWS para persistência, cache e mensageria.
 
 O trabalho contemplou três níveis complementares de execução:
 
@@ -31,7 +31,9 @@ O trabalho contemplou três níveis complementares de execução:
 - cluster Kubernetes local com Kind para validação dos manifestos;
 - implantação real no AWS Academy, com EKS e serviços gerenciados.
 
-O resultado final foi validado ponta a ponta: uma requisição externa atravessou o Network Load Balancer e o Nginx Ingress, chegou aos microsserviços, consultou regras e flags, utilizou Redis, publicou um evento no SQS e terminou com a persistência do dado analítico no DynamoDB.
+O relatório operacional de 29/10/2026 registrou uma validação ponta a ponta: uma requisição externa atravessou o Network Load Balancer e o Nginx Ingress, chegou aos microsserviços, consultou regras e flags, utilizou Redis, publicou um evento no SQS e terminou com a persistência do dado analítico no DynamoDB. As capturas brutas desse ambiente ainda precisam ser anexadas conforme a seção 15.
+
+Essa execução registrada descreve o fluxo funcional da aplicação. Ela não constitui demonstração de scale-out ou scale-in dos HPAs, que exige uma coleta específica antes, durante e depois de um teste de carga.
 
 ## 2. Objetivo
 
@@ -79,21 +81,23 @@ O cliente cria ou utiliza uma chave no auth-service. As definições das flags f
 | Cinco Dockerfiles | Um Dockerfile multi-stage por microsserviço | Atendido |
 | Nove containers locais | Cinco aplicações, dois PostgreSQL, um Redis e um LocalStack | Atendido por equivalência funcional |
 | DynamoDB local | DynamoDB emulado pelo LocalStack, junto com SQS | Atendido por equivalência funcional |
-| Cluster Kubernetes | Kind no ambiente local e EKS no AWS Academy | Atendido |
-| Cinco repositórios ECR | Um repositório privado por serviço | Atendido |
-| Três bancos RDS | Auth, Flag e Targeting em instâncias independentes | Atendido |
-| ElastiCache Redis | Redis Cluster com TLS para o evaluation-service | Atendido |
-| DynamoDB | Tabela ToggleMasterAnalytics | Atendido |
-| SQS Standard | Fila evaluation-analytics-queue | Atendido |
+| Cluster Kubernetes | Kind no ambiente local e EKS no AWS Academy | Registro AWS de 29/10/2026 — captura bruta pendente |
+| Cinco repositórios ECR | Um repositório privado por serviço | Registro AWS de 29/10/2026 — captura bruta pendente |
+| Três bancos RDS | Auth, Flag e Targeting em instâncias independentes | Registro AWS de 29/10/2026 — captura bruta pendente |
+| ElastiCache Redis | Redis Cluster com TLS para o evaluation-service | Registro AWS de 29/10/2026 — captura bruta pendente |
+| DynamoDB | Tabela ToggleMasterAnalytics | Registro AWS de 29/10/2026 — captura bruta pendente |
+| SQS Standard | Fila evaluation-analytics-queue | Registro AWS de 29/10/2026 — captura bruta pendente |
 | Metrics Server | Instalado para fornecer métricas aos HPAs | Atendido |
-| Nginx Ingress | ingress-nginx publicado por NLB | Atendido |
+| Nginx Ingress | ingress-nginx publicado por NLB | Registro AWS de 29/10/2026 — captura bruta pendente |
 | Namespaces separados | auth, flag, targeting, evaluation e analytics | Atendido |
 | Requests, limits e probes | Definidos nos cinco Deployments | Atendido |
-| HPA do evaluation | CPU, mínimo 1 e máximo 5 réplicas | Atendido |
-| HPA do analytics | CPU, mínimo 1 e máximo 5 réplicas | Atendido |
-| Teste ponta a ponta | Validado até SQS, Analytics e DynamoDB | Atendido |
+| HPA do evaluation | CPU, mínimo 1 e máximo 5 réplicas | Configurado — demonstração de scale-out pendente |
+| HPA do analytics | CPU, mínimo 1 e máximo 5 réplicas | Configurado — demonstração de scale-out pendente |
+| Teste ponta a ponta | Registrado até SQS, Analytics e DynamoDB | Registro histórico — evidência bruta pendente |
 
-O enunciado menciona DynamoDB Local. Foi utilizado LocalStack porque ele reproduz tanto DynamoDB quanto SQS em um único container, mantendo o total exigido de nove containers e permitindo testar localmente o mesmo fluxo assíncrono usado na AWS.
+O enunciado menciona literalmente DynamoDB Local. Foi utilizado LocalStack porque ele oferece equivalência funcional para as APIs de DynamoDB e SQS em um único container, mantendo o total de nove containers e permitindo testar localmente o mesmo fluxo assíncrono usado na AWS.
+
+O LocalStack não é a imagem oficial do DynamoDB Local. Portanto, embora o comportamento funcional necessário tenha sido reproduzido, existe risco de o avaliador interpretar essa escolha como divergência formal em relação ao texto do enunciado. A documentação trata a solução como **equivalência funcional**, e não como aderência literal; se a avaliação exigir o produto citado nominalmente, será necessário substituir ou adicionar `amazon/dynamodb-local` e reavaliar o total de containers.
 
 ## 5. Ambiente local com Docker Compose
 
@@ -115,7 +119,7 @@ O arquivo `docker-compose.yml` sobe todos os componentes necessários sem depend
 | auth-db | postgres:16-alpine | interna | banco auth_db |
 | apps-db | postgres:16-alpine | interna | bancos flags_db e targeting_db |
 | redis | redis:7.2-alpine | interna | cache de avaliação |
-| aws-local | localstack/localstack:3.8.1 | 4566 | SQS e DynamoDB locais |
+| aws-local | localstack/localstack:3.8.1 | 4566 | equivalência funcional para SQS e DynamoDB locais |
 
 Os health checks e as condições de dependência evitam que as aplicações iniciem antes dos bancos e dos serviços emulados. Os volumes nomeados preservam os dados entre reinicializações.
 
@@ -129,6 +133,8 @@ docker compose ps
 ```
 
 O teste automatizado cria uma chave de API, registra uma flag, cria uma regra com 100% de ativação, avalia a flag, aguarda o processamento da fila e confirma a persistência no DynamoDB local.
+
+A execução real e datada de `docker compose ps`, com os nove containers saudáveis, está registrada na seção 15.
 
 ### 5.3 Kubernetes local
 
@@ -171,7 +177,7 @@ Boas práticas aplicadas:
 
 ![Arquitetura AWS implantada](arquitetura_aws_togglemaster.png)
 
-**Figura 3 — Arquitetura validada no AWS Academy em 29/10/2026.**
+**Figura 3 — Arquitetura implantada segundo o registro operacional do AWS Academy de 29/10/2026.**
 
 O ambiente foi implantado na conta acadêmica, região `us-east-1`. A entrada pública é fornecida por um Network Load Balancer internet-facing. O tráfego segue para o Nginx Ingress Controller e é encaminhado ao Service Kubernetes correto conforme a rota.
 
@@ -190,25 +196,46 @@ O ambiente foi implantado na conta acadêmica, região `us-east-1`. A entrada p�
 | Segredos | AWS Secrets Manager + External Secrets Operator 2.14.0 |
 | Escala | Metrics Server + dois HPAs |
 
-### 7.2 Imagens publicadas
+### 7.2 Provisionamento do Amazon EKS
 
-| Serviço | Versão implantada |
+O cluster `eks-togglemaster` foi criado manualmente pelo **Console AWS**, conforme a alternativa permitida para o AWS Academy. O guia utilizado durante o provisionamento registra a configuração abaixo.
+
+| Parâmetro | Valor registrado |
 |---|---|
-| auth-service | v1 |
-| flag-service | v1 |
-| targeting-service | v1 |
-| evaluation-service | v3 |
-| analytics-service | v1 |
+| Método de criação | Console AWS |
+| Cluster IAM Role | `LabRole` |
+| Node IAM Role | `LabRole` |
+| Managed Node Group | **PENDENTE — nome não registrado nos artefatos; confirmar no Console AWS** |
+| AMI | Amazon Linux 2023 (AL2023) x86_64 |
+| Tipo das instâncias | `t3.medium` |
+| Armazenamento por nó | 20 GB gp3 |
+| Capacidade mínima | 1 nó |
+| Capacidade desejada | 2 nós |
+| Capacidade máxima | 4 nós |
+
+Os valores `t3.medium` e `1/2/4` constam no guia de implementação, mas ainda precisam ser confrontados com uma captura atual de **EKS → Compute → Managed node groups**. O nome real do Managed Node Group não foi encontrado nos documentos. Esses dados não devem ser apresentados como evidência atual do cluster até essa confirmação.
+
+### 7.3 Imagens publicadas
+
+| Serviço | URI do repositório ECR | Versão registrada |
+|---|---|---|
+| auth-service | `058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/auth-service` | v1 |
+| flag-service | `058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/flag-service` | v1 |
+| targeting-service | `058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/targeting-service` | v1 |
+| evaluation-service | `058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/evaluation-service` | v3 |
+| analytics-service | `058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/analytics-service` | v1 |
 
 A versão `v3` do evaluation-service contém a correção de compatibilidade com o Redis 7 do ElastiCache. O digest registrado no ECR foi `sha256:8e6fdb41e384e0f929a39d1cc5ac5234f76d6997fd249ec05092c70bbf6d6c0d`.
 
-### 7.3 Endpoint externo
+### 7.4 Endpoint externo
 
 ```text
 http://ae6a5981f8069438481a714114fef81d-9676d8a498457cbb.elb.us-east-1.amazonaws.com
 ```
 
 Esse DNS é gerado pela AWS e pode mudar se o Service do ingress-nginx for recriado. A raiz `/` não possui rota e, portanto, retorna `404 Not Found` do Nginx. Esse retorno não indica falha do Load Balancer; as rotas válidas são as definidas nos Ingresses.
+
+Na tentativa de revalidação realizada em **29/10/2026 às 01:35 BRT**, o endereço histórico não respondeu na porta 80. Por isso, ele permanece documentado como endpoint observado no snapshot da implantação, mas não como endpoint atualmente disponível. Uma nova captura do NLB e do Service do ingress-nginx deve ser realizada quando o laboratório AWS estiver ativo.
 
 ## 8. Kubernetes no EKS
 
@@ -232,7 +259,7 @@ Cada domínio possui seu próprio Namespace. Essa separação simplifica a organ
 | evaluation | 100m / 500m | 128Mi / 256Mi | startup, readiness e liveness HTTP |
 | analytics | 100m / 500m | 128Mi / 384Mi | startup TCP, readiness HTTP e liveness TCP |
 
-Os requests permitem ao scheduler reservar capacidade, enquanto os limits reduzem o risco de um pod consumir recursos excessivos. As probes impedem o envio de tráfego antes de a aplicação estar pronta e permitem recuperação automática de processos sem resposta.
+Os requests permitem ao scheduler reservar capacidade, enquanto os limits reduzem o risco de um pod consumir recursos excessivos. Em `auth`, `flag`, `targeting` e `evaluation`, as probes HTTP confirmam que o processo web responde, mas não validam todas as dependências externas, como PostgreSQL, Redis, SQS ou chamadas entre serviços. No `analytics`, a readiness HTTP consulta o estado do worker, enquanto as probes TCP verificam somente a abertura da porta. Portanto, as probes melhoram a recuperação do processo, mas não comprovam sozinhas a saúde completa de todas as integrações.
 
 ### 8.2 Roteamento do Ingress
 
@@ -282,6 +309,16 @@ O evaluation-service utiliza Redis Cluster com criptografia em trânsito. A cone
 
 Depois de responder ao cliente, o evaluation-service publica um evento na fila. O analytics-service realiza long polling, grava o item no DynamoDB e somente então remove a mensagem da fila. Assim, a persistência analítica não bloqueia o caminho síncrono da avaliação.
 
+#### 9.3.1 Esquema da tabela analítica
+
+| Propriedade | Valor |
+|---|---|
+| Tabela | `ToggleMasterAnalytics` |
+| Partition key | `event_id` |
+| Tipo da chave | String (`S`) |
+
+Cada evento recebe um `event_id` antes da operação `PutItem`. Os demais atributos são armazenados de forma flexível, conforme o conteúdo do evento analítico.
+
 O SQS Standard oferece entrega pelo menos uma vez. O ensaio confirmou o fluxo ponta a ponta, mas a implementação ainda não apresenta DLQ, idempotência baseada no identificador da mensagem ou padrão outbox. Se a gravação ocorrer e a remoção da mensagem falhar, uma nova tentativa pode gerar duplicidade. Além disso, a publicação pelo evaluation ocorre de forma assíncrona e ainda não possui retry persistente. Essas garantias adicionais ficam como evolução para produção.
 
 ## 10. Segurança
@@ -304,7 +341,9 @@ Pods autorizados
 
 Foram utilizados quatro documentos no Secrets Manager: `togglemaster/auth`, `togglemaster/flag`, `togglemaster/targeting` e `togglemaster/evaluation`. As três URLs de banco, a chave administrativa, o token Redis e a chave interna do evaluation permanecem no serviço gerenciado.
 
-Os quatro recursos ExternalSecret foram validados com `SecretSynced=True`, e o ClusterSecretStore apresentou estado válido.
+O registro operacional de 29/10/2026 informa quatro recursos ExternalSecret com `SecretSynced=True` e o ClusterSecretStore em estado válido. A saída bruta e datada de `kubectl get` permanece pendente na seção 15.
+
+Cada recurso `ExternalSecret` faz o External Secrets Operator criar ou atualizar um `Secret` nativo do Kubernetes. Nesse objeto, os valores ficam no campo `data`, codificados em Base64. **Base64 é codificação reversível, não criptografia.** A confidencialidade depende dos controles do AWS Secrets Manager, do RBAC e da proteção dos Secrets no cluster; nenhuma evidência deve exibir ou decodificar esses valores.
 
 O intervalo de sincronização é de um minuto. Como os serviços consomem esses valores por variáveis de ambiente, uma rotação atualiza o Secret Kubernetes, mas os pods em execução precisam de rollout controlado ou de um reloader para receber o novo valor.
 
@@ -337,13 +376,15 @@ O Metrics Server fornece utilização de CPU aos HPAs. Foram criados dois recurs
 | evaluation-service-hpa | 1 | 5 | CPU média | 30% | 60 segundos |
 | analytics-service-hpa | 1 | 5 | CPU média | 30% | 60 segundos |
 
-O alvo de 30% foi adotado para tornar a demonstração de escalabilidade mais sensível no ambiente acadêmico. O evaluation escala para responder ao aumento de requisições. O analytics escala quando o consumo de mensagens aumenta sua utilização de CPU.
+O alvo de 30% foi adotado para tornar uma futura demonstração de escalabilidade mais sensível no ambiente acadêmico. O `evaluation` foi configurado para aumentar réplicas quando a carga HTTP elevar a CPU. O `analytics` foi configurado para reagir quando o consumo de mensagens elevar sua utilização de CPU.
+
+Os dois HPAs recebem métricas do Metrics Server e estão configurados nos manifests. Até esta versão do documento, porém, não foi registrada uma sequência antes, durante e depois da carga que comprove o scale-out e o retorno ao mínimo. Esta seção descreve **capacidade configurada**, não escalabilidade demonstrada.
 
 O KEDA seria mais apropriado para escalar o analytics diretamente pela profundidade da fila, inclusive de zero réplicas. Ele não foi usado porque a criação das roles necessárias não é permitida pela LabRole do AWS Academy. O HPA por CPU é o workaround previsto no enunciado.
 
-Além da escala horizontal, a solução utiliza readiness e liveness probes, reinício automático dos containers, fila para amortecer picos e dois nós Ready no cluster.
+Além da configuração de escala horizontal, a solução utiliza readiness e liveness probes, reinício automático dos containers, fila para amortecer picos e dois nós observados como `Ready` no snapshot de 29/10/2026.
 
-Os dois targets saudáveis do NLB e os dois nós não significam alta disponibilidade completa das aplicações. A réplica inicial dos Deployments é 1, e não foram configurados PodDisruptionBudgets, anti-affinity ou topology spread. O HPA oferece capacidade de escala, mas a distribuição e a tolerância a interrupções ainda podem evoluir.
+O registro histórico de dois targets saudáveis do NLB e dois nós não significa alta disponibilidade completa das aplicações. A réplica inicial dos Deployments é 1, e não foram configurados PodDisruptionBudgets, anti-affinity ou topology spread. O HPA oferece capacidade de escala, mas a distribuição e a tolerância a interrupções ainda podem evoluir.
 
 ## 12. Configuração e sequência de implantação
 
@@ -399,9 +440,9 @@ Após a correção, os logs confirmaram conexão com o Redis Cluster e inicializ
 
 ![Fluxo de validação ponta a ponta](fase2_fluxo_validacao.png)
 
-**Figura 4 — Sequência comprovada no smoke test externo.**
+**Figura 4 — Sequência registrada no relatório operacional do smoke test externo.**
 
-O teste realizado pelo endpoint do NLB executou as seguintes etapas:
+Segundo o relatório operacional de 29/10/2026, o teste realizado pelo endpoint do NLB executou as seguintes etapas; a captura bruta dessa execução ainda deve ser anexada:
 
 1. criação de uma API key com a chave administrativa;
 2. validação da nova API key no auth-service;
@@ -413,6 +454,8 @@ O teste realizado pelo endpoint do NLB executou as seguintes etapas:
 8. consumo da mensagem pelo analytics-service;
 9. gravação na tabela `ToggleMasterAnalytics`;
 10. remoção da flag e da regra temporárias.
+
+Esse registro de smoke test descreve o fluxo funcional até o DynamoDB, mas não substitui a evidência bruta, não foi um teste de carga e não comprova scale-out dos HPAs.
 
 Resposta funcional observada:
 
@@ -435,23 +478,69 @@ Invoke-RestMethod "$base/evaluate?user_id=usuario&flag_name=nome-da-flag"
 
 As chaves devem ser informadas em tempo de execução e nunca incluídas em scripts versionados ou documentos.
 
-## 15. Evidências do estado final
+## 15. Evidências reais e rastreabilidade
 
-| Item verificado | Evidência registrada | Resultado |
+As evidências abaixo distinguem três situações: coleta atual reproduzível, registro histórico do ambiente AWS e itens ainda pendentes. Resultados não observados não são apresentados como concluídos.
+
+### 15.1 Docker Compose — coleta atual
+
+Comando executado em **29/10/2026 às 01:33:46 BRT**:
+
+```powershell
+docker compose ps
+```
+
+| Serviço | Imagem | Estado observado | Porta publicada |
+|---|---|---|---|
+| analytics-service | togglemaster/analytics-service:local | Up — healthy | 18005 → 8005 |
+| apps-db | postgres:16-alpine | Up — healthy | interna |
+| auth-db | postgres:16-alpine | Up — healthy | interna |
+| auth-service | togglemaster/auth-service:local | Up — healthy | 18001 → 8001 |
+| aws-local | localstack/localstack:3.8.1 | Up — healthy | 4566 |
+| evaluation-service | togglemaster/evaluation-service:local | Up — healthy | 18004 → 8004 |
+| flag-service | togglemaster/flag-service:local | Up — healthy | 18002 → 8002 |
+| redis | redis:7.2-alpine | Up — healthy | interna |
+| targeting-service | togglemaster/targeting-service:local | Up — healthy | 18003 → 8003 |
+
+Na mesma coleta, `scripts/test-local.ps1` validou os cinco health endpoints, autenticação, criação de flag e regra, avaliação `true` e persistência analítica no DynamoDB emulado; a contagem de itens passou de 4 para 5.
+
+### 15.2 Kubernetes local — baseline dos HPAs
+
+Snapshot obtido em **29/10/2026 às 01:36:29 BRT**, sem geração de carga:
+
+| HPA local | CPU observada / alvo | Mínimo | Máximo | Réplicas |
+|---|---:|---:|---:|---:|
+| analytics-service | 7% / 70% | 1 | 6 | 1 |
+| evaluation-service | 1% / 70% | 2 | 8 | 2 |
+
+Esse snapshot comprova que os HPAs locais recebem métricas, mas representa somente o estado inicial. Ele não demonstra scale-out nem scale-in.
+
+### 15.3 Inventário AWS registrado na validação
+
+O relatório operacional registrou o seguinte snapshot do AWS Academy em **29/10/2026**. Como o ambiente não pôde ser consultado novamente nesta revisão, a tabela separa o registro existente da captura bruta ainda necessária.
+
+| Item exigido | Registro datado de 29/10/2026 | Situação da evidência |
 |---|---|---|
-| EKS | cluster `eks-togglemaster`, Kubernetes 1.37 | Aprovado |
-| Nós | dois nós em estado Ready | Aprovado |
-| Aplicações | cinco Deployments disponíveis em 1/1 no snapshot de 29/10/2026 | Aprovado |
-| Estabilidade | pods em Running e zero reinicializações no snapshot de 29/10/2026 | Aprovado |
-| Inicialização SQL | três Jobs concluídos durante a validação | Aprovado |
-| Segredos | quatro ExternalSecrets sincronizados durante a validação | Aprovado |
-| Secret store | ClusterSecretStore válido | Aprovado |
-| NLB | internet-facing e estado active | Aprovado |
-| Targets | dois targets saudáveis nas portas 80 e 443 | Aprovado |
-| Escalabilidade | HPAs de evaluation e analytics ativos | Aprovado |
-| Avaliação | resposta externa com resultado true | Aprovado |
-| Mensageria | evento publicado e consumido no SQS | Aprovado |
-| Analytics | item persistido no DynamoDB | Aprovado |
+| Cinco repositórios ECR | `058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/auth-service:v1`<br>`058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/flag-service:v1`<br>`058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/targeting-service:v1`<br>`058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/evaluation-service:v3`<br>`058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/analytics-service:v1` | Registro operacional disponível; captura do Console/CLI pendente |
+| EKS e Managed Node Group | `eks-togglemaster`, Kubernetes 1.37, dois nós `Ready` | Cluster registrado; nome do Node Group, tipo e escala precisam de captura atual |
+| Cinco aplicações | Deployments de auth, flag, targeting, evaluation e analytics disponíveis no snapshot | Registro operacional disponível; `kubectl get deployments,pods -A` datado pendente |
+| Três RDS | `db-auth-service`, `db-flag-service`, `db-targeting-service`, privados | Registro operacional disponível; captura `describe-db-instances` pendente |
+| ElastiCache | Redis Cluster `redis-evaluation-service`, TLS e autenticação | Registro operacional e logs do evaluation disponíveis; captura do Console/CLI pendente |
+| SQS | fila Standard `evaluation-analytics-queue`, evento publicado e consumido | Fluxo funcional registrado; captura dos atributos da fila pendente |
+| DynamoDB | tabela `ToggleMasterAnalytics`; item persistido pelo analytics | Fluxo funcional registrado; captura `describe-table` e item sanitizado pendente |
+| ExternalSecrets | `auth-secret`, `flag-secret`, `targeting-secret` e `evaluation-secret` com `SecretSynced=True`; store válido | Registro operacional disponível; saída datada de `kubectl get` pendente |
+| NLB e Ingress | ingress-nginx publicado por NLB internet-facing, com rotas `/auth`, `/flags`, `/rules` e `/evaluate` | Registro histórico; captura atual pendente e endpoint indisponível na revalidação de 29/10/2026 às 01:35 BRT |
+| HPAs | evaluation e analytics configurados em `autoscaling/v2`, CPU 30%, mínimo 1 e máximo 5 | **Configurado — demonstração de scale-out pendente** |
+
+### 15.4 Evidência obrigatória ainda pendente para os HPAs
+
+| Momento | Evidência esperada | Estado |
+|---|---|---|
+| Antes da carga | `kubectl get hpa -A` e réplicas iniciais, com data e hora | Pendente |
+| Durante a carga | CPU acima do alvo, aumento de `DESIRED/CURRENT REPLICAS` e pods adicionais | Pendente |
+| Depois da carga | redução da CPU e retorno das réplicas após a janela de estabilização | Pendente |
+
+Enquanto os três snapshots acima não forem coletados no EKS, o documento não afirma que a escalabilidade horizontal foi demonstrada.
 
 ## 16. Arquitetura de microsserviços
 
@@ -486,9 +575,9 @@ As chaves devem ser informadas em tempo de execução e nunca incluídas em scri
 | V. Build, Release, Run | Atende parcialmente | estágios separados, porém ainda sem pipeline CI/CD completo |
 | VI. Processes | Atende | aplicações stateless; estado mantido em serviços externos |
 | VII. Port Binding | Atende | cada serviço publica sua própria porta HTTP |
-| VIII. Concurrency | Atende | Deployments e HPAs permitem múltiplas réplicas |
+| VIII. Concurrency | Atende parcialmente | Deployments e HPAs permitem múltiplas réplicas, mas o comportamento sob carga ainda precisa de evidência |
 | IX. Disposability | Atende parcialmente | probes e reinício automático; graceful shutdown pode evoluir |
-| X. Dev/Prod Parity | Atende parcialmente | mesmas APIs, porém LocalStack e bancos locais substituem serviços AWS |
+| X. Dev/Prod Parity | Atende parcialmente | mesmas APIs, porém LocalStack fornece equivalência funcional — não aderência literal ao DynamoDB Local — e bancos locais substituem serviços AWS |
 | XI. Logs | Atende parcialmente | logs em stdout; falta centralização e correlação |
 | XII. Admin Processes | Atende | inicialização de banco executada por Jobs Kubernetes |
 
@@ -536,7 +625,7 @@ Uma estimativa formal deve registrar região, tipos de instância, armazenamento
 
 **Três RDS independentes:** cada serviço relacional controla seu próprio esquema e credenciais.
 
-**LocalStack no ambiente local:** SQS e DynamoDB são reproduzidos em um único container, preservando o total de nove containers.
+**LocalStack no ambiente local:** SQS e DynamoDB são reproduzidos por equivalência funcional em um único container, preservando o total de nove containers. Como o enunciado cita literalmente DynamoDB Local, a decisão possui risco de interpretação formal pelo avaliador.
 
 **Kustomize para os manifestos AWS:** permite renderização e aplicação conjunta, mantendo os diretórios organizados por domínio.
 
@@ -566,9 +655,9 @@ Uma estimativa formal deve registrar região, tipos de instância, armazenamento
 
 ## 22. Conclusão
 
-A Fase 2 transformou o ToggleMaster de um MVP monolítico em uma plataforma de microsserviços conteinerizada e implantada em Kubernetes. A solução atende aos requisitos centrais do desafio e foi validada tanto localmente quanto em um ambiente EKS real.
+A Fase 2 transformou o ToggleMaster de um MVP monolítico em uma plataforma de microsserviços conteinerizada e implantada em Kubernetes. A execução local foi revalidada nesta revisão; a implantação no EKS real consta no registro operacional de 29/10/2026, cujas evidências brutas ainda precisam ser anexadas.
 
-O uso combinado de RDS, ElastiCache, SQS e DynamoDB alinhou cada tipo de dado ao serviço mais adequado. O Nginx Ingress e o NLB forneceram uma entrada única, enquanto Metrics Server e HPA permitiram escalabilidade horizontal. A gestão de segredos foi elevada para o AWS Secrets Manager, sincronizado pelo External Secrets Operator.
+O uso combinado de RDS, ElastiCache, SQS e DynamoDB alinhou cada tipo de dado ao serviço mais adequado. O Nginx Ingress e o NLB forneceram uma entrada única, enquanto Metrics Server e HPA foram configurados para viabilizar escalabilidade horizontal. A demonstração de scale-out permanece pendente. A gestão de segredos foi elevada para o AWS Secrets Manager, sincronizado pelo External Secrets Operator.
 
 O teste ponta a ponta confirmou a integração entre todas as camadas: autenticação, configuração de flags, regras, avaliação, cache, fila e analytics. A correção realizada no cliente Redis também demonstrou capacidade de diagnóstico e adaptação a diferenças reais entre o ambiente local e um serviço gerenciado.
 
@@ -578,8 +667,8 @@ Como próximos passos, a arquitetura deve evoluir em identidade por workload, HT
 
 | Item | Informação |
 |---|---|
-| Repositório principal | Preencher antes da entrega |
-| Vídeo de demonstração | Preencher antes da entrega |
+| Repositório principal | [Tech Challenge Fase 2 — ToggleMaster](https://github.com/jefersonpapalinosp-sys/Tech_Challenge_Fase_2_ToggleMaster) |
+| Vídeo de demonstração | **PENDENTE — inserir o link real da Fase 2** |
 | Diagrama de arquitetura | `docs/arquitetura_aws_togglemaster.png` |
 | Manifestos AWS | `k8s-aws/` e `k8s-aws.zip` |
 | Docker Compose local | `docker-compose.yml` |
@@ -589,14 +678,17 @@ Como próximos passos, a arquitetura deve evoluir em identidade por workload, HT
 
 ### Checklist antes do envio
 
-- preencher RM e Discord de todos os integrantes;
-- inserir o link definitivo do repositório;
-- inserir o link público ou compartilhado do vídeo;
-- conferir se o endpoint do NLB continua válido;
+- [ ] preencher RM e Discord de todos os integrantes;
+- [x] inserir o link definitivo do repositório;
+- [ ] inserir o link público ou compartilhado do vídeo da Fase 2;
+- [ ] confirmar no Console o nome do Managed Node Group, tipo de instância e escala 1/2/4;
+- [ ] coletar as evidências AWS brutas e datadas indicadas na seção 15;
+- [ ] registrar HPA antes, durante e depois da carga;
+- [ ] publicar ou recriar o endpoint do NLB e validar as rotas;
 - remover ou mascarar qualquer credencial em capturas de tela;
 - exportar novamente o PDF após qualquer alteração no Word;
 - revisar o sumário e a numeração de páginas.
 
 ---
 
-**Documento elaborado a partir dos arquivos do projeto, dos manifestos e do estado AWS validado em 29/10/2026. Nenhuma credencial temporária, senha, token ou API key foi incluída.**
+**Documento elaborado a partir dos arquivos do projeto, dos manifestos e do registro operacional do estado AWS em 29/10/2026. As capturas brutas pendentes estão identificadas na seção 15. Nenhuma credencial temporária, senha, token ou API key foi incluída.**

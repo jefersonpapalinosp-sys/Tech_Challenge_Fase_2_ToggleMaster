@@ -1,0 +1,19 @@
+TOGGLEMASTER - EVIDÊNCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Região: us-east-1 | Data: 2026-10-30 22:04:41 -03:00
+
+Identidade AWS e contexto da coleta
+===================================
+
+Comando equivalente:
+aws sts get-caller-identity
+
+Saída:
+---------------------------------------------------------------------------------------------------------
+|                                           GetCallerIdentity                                           |
++---------+---------------------------------------------------------------------------------------------+
+|  Account|  533267349027                                                                               |
+|  Arn    |  arn:aws:sts::533267349027:assumed-role/voclabs/user5237687=jeferson.papalinosp@gmail.com   |
+|  UserId |  AROAXYKJV7YR7XQ2B3APM:user5237687=jeferson.papalinosp@gmail.com                            |
++---------+---------------------------------------------------------------------------------------------+
+
+Observação: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.

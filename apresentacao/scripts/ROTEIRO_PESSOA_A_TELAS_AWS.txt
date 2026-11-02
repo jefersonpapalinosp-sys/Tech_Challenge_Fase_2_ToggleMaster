@@ -1,0 +1,180 @@
+ROTEIRO — PESSOA A (AFONSO) — VÍDEO 2: TELAS DA AWS QUE FALTARAM
+
+Regravações planejadas (3 vídeos):
+  Vídeo 1 — Escalabilidade do analytics: FALAS_ANALYTICS_HPA.txt + COMANDOS_ANALYTICS_HPA.txt
+  Vídeo 2 — Telas da pessoa A (ESTE ARQUIVO): gravar tela + fala
+  Vídeo 3 — Falas da pessoa B: ROTEIRO_PESSOA_B_FALAS.txt (somente voz)
+
+Cada bloco abaixo SUBSTITUI um trecho do vídeo final (ToggleMaster_Fase2_Video_Final.mp4).
+Os tempos indicados são desse vídeo. Respeite a duração máxima de cada fala: o vídeo final
+precisa continuar abaixo de 20 minutos.
+
+------------------------------------------------------------------------
+ANTES DE GRAVAR
+------------------------------------------------------------------------
+- Lab ativo e docs\LAB 2.txt atualizado (as credenciais antigas foram canceladas).
+- Conferir se os nós estão no cluster (COMANDOS_ANALYTICS_HPA.txt, blocos 0 e 9).
+- Como no vídeo original: o Jeferson controla a tela e a pessoa A fala.
+- Na barra do Google Meet "está compartilhando sua tela", clicar em "Ocultar" antes de gravar.
+- Deixar o bloco de notas com comandos FECHADO durante a gravação.
+- Em cada bloco: primeiro abrir a página e esperar carregar; só depois a pessoa A fala.
+  Entre um bloco e outro, 3 segundos de silêncio (facilita os cortes).
+- Nunca clicar em "Recuperar valor do segredo" nem abrir o LAB 2.txt na tela.
+- Para os blocos de terminal (A8 e A9), preparar um terminal com o bloco 00:
+    Set-Location 'C:\Users\Jeferson\Desktop\Fase 2 Tech FIAP'
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+    . .\apresentacao\scripts\01-preparar-sessao.ps1
+    cls
+
+Prioridade: ALTA = a tela atual não mostra o que é falado. MÉDIA = melhora a prova.
+OPCIONAL = só se sobrar tempo.
+
+========================================================================
+A0 — TELA SEM FALA: DOCKERFILES (OPCIONAL)
+Substitui só a IMAGEM de 1:32–2:01 (a fala original sobre multi-stage é mantida).
+Hoje aparece o go.mod enquanto a fala é sobre Dockerfile.
+========================================================================
+CAMINHO (VS Code):
+  apresentacao > apoio_codigo > auth-service.Dockerfile  (rolar devagar, ~15 s)
+  apresentacao > apoio_codigo > flag-service.Dockerfile  (rolar devagar, ~15 s)
+FALA: nenhuma. Gravar só a tela, cerca de 30 segundos.
+
+========================================================================
+A1 — ECR: REPOSITÓRIOS E TAGS (MÉDIA) — substitui 5:07–5:28 — máx. 25 s
+========================================================================
+CAMINHO:
+  Barra de pesquisa: "ECR" > Elastic Container Registry > Repositórios privados
+  Mostrar a lista com os 5 repositórios "namespace/...".
+  Clicar em namespace/evaluation-service > aba Imagens > mostrar a tag v3.
+  Voltar > clicar em namespace/lag-service > mostrar a tag v1.
+FALA:
+"No ECR temos cinco repositórios privados, um por microsserviço. O do flag-service foi
+criado com o nome namespace/lag-service, e é esse nome que o Deployment usa. O evaluation
+está na tag v3, publicada depois da correção para o Redis em modo cluster; os demais
+estão na v1."
+
+========================================================================
+A2 — RDS: PRIVADO E CRIPTOGRAFADO (MÉDIA) — substitui 5:28–5:55 — máx. 30 s
+========================================================================
+CAMINHO:
+  Barra de pesquisa: "RDS" > Aurora and RDS > Bancos de dados
+  Mostrar db-authservice, dbflags e dbtargeting como "Disponível", PostgreSQL.
+  Clicar em db-authservice > aba Conectividade e segurança:
+    mostrar Endpoint, "Acessível publicamente: Não" e o grupo de segurança sgdbauth.
+  Aba Configuração > seção Armazenamento: mostrar "Criptografia: Habilitada".
+FALA:
+"No RDS temos os três PostgreSQL, um por serviço: db-authservice, dbflags e dbtargeting,
+todos disponíveis. Abrindo o do auth: o endpoint é privado, a opção acessível
+publicamente está como Não e o armazenamento é criptografado. Cada serviço usa o próprio
+banco, o que mantém os domínios separados."
+
+========================================================================
+A3 — ELASTICACHE: CLUSTER redisevaluation (ALTA) — substitui 5:55–6:22 — máx. 30 s
+Hoje só aparece a página inicial do ElastiCache ("Comece a usar").
+========================================================================
+CAMINHO:
+  Barra de pesquisa: "ElastiCache" > menu esquerdo: Caches do Redis OSS
+  (se não estiver ali, procurar em Caches do Valkey)
+  Clicar em redisevaluation e mostrar:
+    Status Disponível; Modo cluster Habilitado; Criptografia em trânsito Habilitada;
+    Criptografia em repouso Habilitada; autenticação por token (AUTH);
+    Endpoint de configuração clustercfg.redisevaluation...:6379.
+FALA:
+"No ElastiCache está o cluster redisevaluation, usado pelo evaluation-service. Ele está
+com modo cluster habilitado, criptografia em trânsito com TLS, criptografia em repouso
+e autenticação por token. O evaluation guarda por 30 segundos a combinação de flag e
+regra; num cache hit, responde sem chamar o flag-service e o targeting-service."
+
+========================================================================
+A4 — DYNAMODB: TABELA E ITENS (OPCIONAL) — substitui 6:22–6:51 — máx. 30 s
+========================================================================
+CAMINHO:
+  Barra de pesquisa: "DynamoDB" > Tabelas > ToggleMasterAnalytics
+  Mostrar: chave de partição event_id (String) e modo de capacidade Sob demanda.
+  Botão "Explorar itens da tabela" > mostrar alguns itens.
+FALA:
+"A tabela ToggleMasterAnalytics guarda os eventos de avaliação, com event_id como chave
+de partição e capacidade sob demanda. Nos itens aparecem os eventos já gravados pelo
+analytics: nome da flag, usuário, resultado e horário. Assim, o RDS fica com os dados
+relacionais, o Redis com o cache temporário e o DynamoDB com a persistência analítica."
+
+========================================================================
+A5 — SQS: NOME CORRETO DA FILA (MÉDIA) — substitui 6:51–7:22 — máx. 30 s
+No vídeo atual a fila foi chamada de "Evaluation Analytics Q"; o nome é tgmqueue.
+========================================================================
+CAMINHO:
+  Barra de pesquisa: "SQS" > Filas > tgmqueue
+  Mostrar Detalhes: Tipo Padrão e criptografia SSE-SQS.
+FALA:
+"A fila tgmqueue é do tipo Standard. O evaluation publica um evento a cada avaliação e
+o analytics consome no seu ritmo, então a fila desacopla os dois serviços e absorve
+picos de carga. Como a fila Standard pode entregar a mesma mensagem mais de uma vez,
+idempotência e fila de mensagens mortas seriam evoluções para produção."
+
+========================================================================
+A6 — SECURITY GROUPS (ALTA) — substitui 7:22–7:51 — máx. 35 s
+Hoje a fala sobre Security Groups aparece sobre a tela do Secrets Manager.
+========================================================================
+CAMINHO:
+  Barra de pesquisa: "EC2" > menu esquerdo: Rede e segurança > Grupos de segurança
+  Pesquisar "sgdbauth" > aba Regras de entrada:
+    TCP 5432 com origem sg-079be737f17db5c6b (eks-cluster-sg-ekstogglemaster)
+    e a regra de um IP /32.
+  Pesquisar "sg-05eb72e24a646803e" (grupo "default" usado pelo Redis) > Regras de entrada:
+    TCP 6379 com origem no grupo do cluster EKS.
+FALA:
+"Nenhum banco nem o cache é público: todos usam endpoints privados na VPC do cluster.
+Os grupos de segurança dos RDS liberam a porta 5432 só para o grupo de segurança do EKS,
+e o do Redis libera a 6379 da mesma forma. Nos RDS também existe uma regra
+administrativa para um único IP, com máscara /32; ela não torna o banco público,
+porque o RDS está configurado como não acessível publicamente."
+
+========================================================================
+A7 — SECRETS MANAGER (OPCIONAL) — trecho novo — máx. 15 s
+========================================================================
+CAMINHO:
+  Barra de pesquisa: "Secrets Manager" > Segredos
+  Mostrar só a lista: togglemaster/auth, togglemaster/flag, togglemaster/targeting,
+  togglemaster/evaluation. NÃO abrir nenhum segredo.
+FALA:
+"As credenciais ficam no Secrets Manager, um segredo por serviço. O que não é sensível
+vai para ConfigMaps. No cluster, quem lê esses segredos é o External Secrets, que
+aparece na parte dos manifestos."
+
+========================================================================
+A8 — ITEM 3: METRICS SERVER (ALTA) — substitui 7:51–8:17 — máx. 30 s
+Hoje a fala aparece sobre o console do EKS, sem mostrar o Metrics Server.
+========================================================================
+COMANDOS (terminal preparado com o bloco 00):
+  kubectl get deployment metrics-server -n kube-system
+  kubectl top nodes
+  kubectl top pods -n evaluation-service
+FALA:
+"Agora o item 3, configuração do cluster. O Metrics Server está instalado no namespace
+kube-system e disponível. Ele coleta CPU e memória dos nós e dos pods, como mostra o
+kubectl top, e o HPA depende dessa métrica para decidir quando criar réplicas."
+
+========================================================================
+A9 — ITEM 3: NGINX INGRESS CONTROLLER E LOAD BALANCER (ALTA)
+substitui 8:17–8:55 — máx. 40 s
+========================================================================
+COMANDOS (mesmo terminal):
+  kubectl get deployment -n ingress-nginx -L app.kubernetes.io/managed-by,helm.sh/chart
+  kubectl get pods,svc -n ingress-nginx
+CAMINHO (depois dos comandos):
+  Barra de pesquisa: "EC2" > menu esquerdo: Balanceamento de carga > Load balancers
+  Clicar em a5bc56a01f92c4e85887af601f04b84e: tipo Classic, esquema internet-facing.
+  Aba Instâncias de destino (ou Instâncias): os 2 nós "InService".
+FALA:
+"O segundo componente é o Nginx Ingress Controller, instalado com Helm no namespace
+ingress-nginx. O Service dele é do tipo LoadBalancer e, com as permissões da LabRole,
+a AWS criou automaticamente este Load Balancer público, com os dois nós do EKS em
+serviço. Foi criado um Classic Load Balancer, enquanto o enunciado cita ALB ou NLB;
+registramos essa diferença como ponto de adequação. As rotas de cada aplicação aparecem
+nos manifestos de Ingress, na parte do Jeferson."
+
+------------------------------------------------------------------------
+DEPOIS DO A9
+------------------------------------------------------------------------
+A passagem para a pessoa B (8:55–9:12, "E assim a gente conclui...") continua a original.
+Ordem de gravação sugerida: A1 a A9 na sequência acima; repetir só o bloco que errar.

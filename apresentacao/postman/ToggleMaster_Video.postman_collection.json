@@ -1,0 +1,126 @@
+{
+  "info": {
+    "name": "ToggleMaster - Demonstração do vídeo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Validar API key",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{api_key}}"
+          }
+        ],
+        "url": "{{base_url}}/auth/validate"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Chave válida',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Criar flag",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{api_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/flags",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{flag_name}}\",\n  \"description\": \"Demonstração do vídeo\",\n  \"is_enabled\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Flag criada',()=>pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Criar regra 100%",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{api_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/rules",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"flag_name\": \"{{flag_name}}\",\n  \"is_enabled\": true,\n  \"rules\": {\n    \"type\": \"PERCENTAGE\",\n    \"value\": 100\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Regra criada',()=>pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Avaliar flag",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/evaluate?user_id={{user_id}}&flag_name={{flag_name}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "pm.test('Decisão true',()=>pm.expect(pm.response.json().result).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

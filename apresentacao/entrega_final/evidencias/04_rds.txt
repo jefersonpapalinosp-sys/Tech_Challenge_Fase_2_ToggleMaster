@@ -1,0 +1,21 @@
+TOGGLEMASTER - EVIDÊNCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Região: us-east-1 | Data: 2026-10-30 22:04:54 -03:00
+
+Três bancos PostgreSQL no Amazon RDS
+====================================
+
+Comando equivalente:
+aws rds describe-db-instances
+
+Saída:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|                                                                       DescribeDBInstances                                                                      |
++--------------+-----------------+------------+-----------------------------------------------------------+-----------+-------+---------+------------+-----------+
+|     Class    |       DB        | Encrypted  |                         Endpoint                          |  Engine   | Port  | Public  |  Status    |  Version  |
++--------------+-----------------+------------+-----------------------------------------------------------+-----------+-------+---------+------------+-----------+
+|  db.t4g.micro|  db-authservice |  True      |  db-authservice.cjsc4kc2abeq.us-east-1.rds.amazonaws.com  |  postgres |  5432 |  False  |  available |  18.3     |
+|  db.t4g.micro|  dbflags        |  True      |  dbflags.cjsc4kc2abeq.us-east-1.rds.amazonaws.com         |  postgres |  5432 |  False  |  available |  18.3     |
+|  db.t4g.micro|  dbtargeting    |  True      |  dbtargeting.cjsc4kc2abeq.us-east-1.rds.amazonaws.com     |  postgres |  5432 |  False  |  available |  18.3     |
++--------------+-----------------+------------+-----------------------------------------------------------+-----------+-------+---------+------------+-----------+
+
+Observação: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.

@@ -1,0 +1,33 @@
+x-tele:
+  connections:
+    - name: togglemaster
+      namespace: default
+      manager-namespace: ambassador
+      also-proxy:
+        - 10.0.0.0/16
+
+services:
+  auth-service:
+    x-tele:
+      type: connect
+      connection: togglemaster
+
+  flag-service:
+    x-tele:
+      type: connect
+      connection: togglemaster
+
+  targeting-service:
+    x-tele:
+      type: connect
+      connection: togglemaster
+
+  evaluation-service:
+    x-tele:
+      type: connect
+      connection: togglemaster
+
+  analytics-service:
+    x-tele:
+      type: connect
+      connection: togglemaster

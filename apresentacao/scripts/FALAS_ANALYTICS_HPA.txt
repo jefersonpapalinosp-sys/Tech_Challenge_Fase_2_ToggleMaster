@@ -1,0 +1,62 @@
+FALAS — REGRAVAÇÃO DO ANALYTICS ESCALANDO (SQS → HPA → DYNAMODB)
+
+Apresentador: Jeferson (parte 2). Comandos: COMANDOS_ANALYTICS_HPA.txt (mesma numeração).
+Enunciado, página 9: "Envie manualmente várias mensagens para a fila SQS", "Mostre o HPA
+do analytics-service detectando a carga (CPU) e escalando seus pods" e "Mostre os dados
+aparecendo na tabela do DynamoDB".
+
+Duração das falas: cerca de 1min30. Este trecho substitui o de 14:32 a 15:35 do vídeo e,
+depois de editado, precisa ficar em até 2min30 para o vídeo final continuar abaixo de 20 min.
+
+COMO GRAVAR
+- Primeiro rode o bloco e espere o resultado aparecer na tela; depois fale.
+- Nas esperas, fique em silêncio: os trechos parados são cortados na edição.
+- Onde aparece [entre colchetes], leia o valor que estiver na tela.
+- Só diga que escalou se o terminal 2 mostrar "desejada" maior que 1 e os pods novos aparecerem.
+
+
+FALA 1 — BLOCO 2 (terminal 1: HPA e pod do analytics antes do envio)
+"Agora vamos demonstrar a escalabilidade do analytics-service. Ele consome os eventos
+da fila SQS e grava no DynamoDB. O HPA dele é por CPU: o alvo é 30% do request,
+com mínimo de uma e máximo de cinco réplicas. Neste momento ele está com uma réplica
+e a CPU perto de zero."
+
+
+FALA 2 — BLOCO 3 (terminal 1: envio das mensagens)
+"Conforme o enunciado, vamos enviar manualmente várias mensagens para a fila tgmqueue.
+São 6 mil eventos sintéticos, enviados em lotes de 10 e em paralelo. Cada evento tem
+user_id, flag_name, result e timestamp. O RunId identifica este lote, para localizarmos
+esses eventos no DynamoDB no final."
+
+
+FALA 3 — terminal 2 (linha do tempo: fila e CPU subindo)
+"Nesta tela acompanhamos, a cada 10 segundos, o tamanho da fila, a CPU média medida
+pelo Metrics Server e o número de réplicas. A fila acumulou [quantidade] mensagens.
+O worker processa cada mensagem, grava o evento no DynamoDB e apaga a mensagem da fila,
+e isso faz a CPU subir: já está em [valor] por cento, acima do alvo de 30."
+
+
+FALA 4 — BLOCO 4 (terminal 1: HPA e pods depois do scale-out)
+"O HPA detectou a carga: com a CPU acima do alvo, ele aumentou o deployment para
+[número] réplicas. Aqui estão os novos pods do analytics em Running, e o kubectl top
+mostra o consumo de CPU de cada um. Todos consomem a mesma fila, então o processamento
+é dividido entre eles."
+
+
+FALA 5 — BLOCO 5 (terminal 2: fila esvaziando e volta para uma réplica)
+"Com mais consumidores, a fila esvazia rapidamente. Quando a CPU cai abaixo do alvo,
+o HPA espera a janela de estabilização de 60 segundos e volta para uma réplica."
+(Se a volta para uma réplica não aparecer na gravação, fale só a primeira frase.)
+
+
+FALA 6 — BLOCO 6 (terminal 1: consulta no DynamoDB)
+"Por fim, buscamos no DynamoDB os eventos com o RunId deste lote. Aqui estão os
+registros gravados pelo analytics, e a contagem mostra [quantidade] eventos,
+o que confirma a persistência das mensagens enviadas à fila."
+(A fila Standard pode entregar alguma mensagem mais de uma vez; se a contagem passar
+um pouco de 6000, diga apenas o número que aparecer.)
+
+
+FALA 7 — BLOCO 7 (terminal 1: kubectl get hpa -A)
+"Assim fechamos o fluxo completo: envio manual ao SQS, escala do analytics pelo HPA
+de CPU e persistência no DynamoDB."

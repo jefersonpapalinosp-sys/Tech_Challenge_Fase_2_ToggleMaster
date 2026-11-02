@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: evaluation-service
-          image: 058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/evaluation-service:v3
+          image: 533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/evaluation-service:v3
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

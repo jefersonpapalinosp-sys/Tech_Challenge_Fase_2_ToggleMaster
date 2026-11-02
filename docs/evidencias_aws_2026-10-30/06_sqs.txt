@@ -1,0 +1,21 @@
+TOGGLEMASTER - EVIDÊNCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Região: us-east-1 | Data: 2026-10-30 22:04:56 -03:00
+
+Fila SQS tgmqueue
+=================
+
+Comando equivalente:
+aws sqs get-queue-attributes
+
+Saída:
+------------------------------------------------------------------------------------------
+|                                   GetQueueAttributes                                   |
++----------------------------------------+-----------------------------------------------+
+|  ApproximateNumberOfMessages           |  0                                            |
+|  ApproximateNumberOfMessagesNotVisible |  0                                            |
+|  CreatedTimestamp                      |  1793397696                                   |
+|  QueueArn                              |  arn:aws:sqs:us-east-1:533267349027:tgmqueue  |
+|  SqsManagedSseEnabled                  |  true                                         |
++----------------------------------------+-----------------------------------------------+
+
+Observação: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.

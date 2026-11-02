@@ -1,0 +1,28 @@
+BASE_URL=http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com
+
+# AUTH SERVICE - substitua <MASTER_KEY>
+curl --location --request POST 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/auth/admin/keys' --header 'Authorization: Bearer <MASTER_KEY>' --header 'Content-Type: application/json' --data-raw '{"name":"postman-api"}'
+
+# AUTH SERVICE - substitua <API_KEY> pelo valor tm_key_ retornado
+curl --location 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/auth/validate' --header 'Authorization: Bearer <API_KEY>'
+
+# FLAG SERVICE
+curl --location --request POST 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/flags' --header 'Authorization: Bearer <API_KEY>' --header 'Content-Type: application/json' --data-raw '{"name":"postman-api-completa","description":"Flag via cURL","is_enabled":true}'
+curl --location 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/flags' --header 'Authorization: Bearer <API_KEY>'
+curl --location 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/flags/postman-api-completa' --header 'Authorization: Bearer <API_KEY>'
+curl --location --request PUT 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/flags/postman-api-completa' --header 'Authorization: Bearer <API_KEY>' --header 'Content-Type: application/json' --data-raw '{"description":"Atualizada via cURL","is_enabled":true}'
+
+# TARGETING SERVICE
+curl --location --request POST 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/rules' --header 'Authorization: Bearer <API_KEY>' --header 'Content-Type: application/json' --data-raw '{"flag_name":"postman-api-completa","is_enabled":true,"rules":{"type":"PERCENTAGE","value":100}}'
+curl --location 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/rules/postman-api-completa' --header 'Authorization: Bearer <API_KEY>'
+curl --location --request PUT 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/rules/postman-api-completa' --header 'Authorization: Bearer <API_KEY>' --header 'Content-Type: application/json' --data-raw '{"is_enabled":true,"rules":{"type":"PERCENTAGE","value":100}}'
+
+# EVALUATION SERVICE
+curl --location 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/evaluate?user_id=usuario-postman&flag_name=postman-api-completa'
+
+# ANALYTICS SERVICE - primeiro execute o port-forward indicado no README
+curl --location 'http://localhost:8005/health'
+
+# LIMPEZA
+curl --location --request DELETE 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/rules/postman-api-completa' --header 'Authorization: Bearer <API_KEY>'
+curl --location --request DELETE 'http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com/flags/postman-api-completa' --header 'Authorization: Bearer <API_KEY>'

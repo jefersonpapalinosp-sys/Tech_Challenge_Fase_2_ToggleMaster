@@ -1,0 +1,50 @@
+TOGGLEMASTER - EVIDÊNCIA HPA DO ANALYTICS NO AMAZON EKS
+Conta: 533267349027 | Região: us-east-1 | Data: 2026-11-02 10:42 a 10:45 -03:00
+
+Origem: gravação de tela de 02/11/2026, iniciada às 10:41.
+Este arquivo transcreve os valores exibidos no terminal e foi conferido nos quadros
+14a a 14f desta pasta. Não é uma saída bruta salva pelos comandos.
+
+Lote enviado: 6000 eventos sintéticos, diretamente à fila tgmqueue.
+RunId (gravado em flag_name): video-hpa-20261102134256-40a000
+Script: apresentacao/scripts/04-carga-analytics-sqs.py --count 6000
+
+=== 14a - ANTES DO ENVIO (relógio 10:42:27) ===
+analytics-service-hpa   Deployment/analytics-service   cpu: 2%/30%   MINPODS 1   MAXPODS 5   REPLICAS 1
+analytics-service-86996c7c6-nxcj6   1/1   Running   0   21h
+
+=== 14b - ENVIO MANUAL (relógio 10:43) ===
+Mensagens aceitas: 6000/6000
+RunId        : video-hpa-20261102134256-40a000
+MessagesSent : 6000
+Queue        : tgmqueue
+
+=== 14c - SCALE-OUT (relógio 10:43) ===
+analytics-service-hpa   Deployment/analytics-service   cpu: 340%/30%   MINPODS 1   MAXPODS 5   REPLICAS 4
+analytics-service-86996c7c6-6xdff   1/1   Running   0   30s
+analytics-service-86996c7c6-7gdk6   1/1   Running   0   15s
+analytics-service-86996c7c6-h45f5   1/1   Running   0   30s
+analytics-service-86996c7c6-jf6dt   1/1   Running   0   30s
+analytics-service-86996c7c6-nxcj6   1/1   Running   0   21h
+kubectl top pods (o pod 7gdk6, criado havia 15 s, ainda não aparece na listagem):
+analytics-service-86996c7c6-6xdff   275m   64Mi
+analytics-service-86996c7c6-h45f5   370m   63Mi
+analytics-service-86996c7c6-jf6dt   285m   63Mi
+analytics-service-86996c7c6-nxcj6   327m   64Mi
+
+=== 14d - MÁXIMO DE RÉPLICAS (relógio 10:44) ===
+analytics-service-hpa   Deployment/analytics-service   cpu: 73%/30%   MINPODS 1   MAXPODS 5   REPLICAS 5
+
+=== 14e - DYNAMODB (relógio 10:45) ===
+Scan de ToggleMasterAnalytics filtrado por flag_name = RunId.
+Eventos encontrados neste lote: 6000
+O quadro 14e exibe os dez primeiros registros, com usuários synthetic-video-* e result = True.
+
+=== 14f - DEPOIS (relógio 10:45) ===
+analytics-service    analytics-service-hpa    Deployment/analytics-service    cpu: 1%/30%   MINPODS 1   MAXPODS 5   REPLICAS 1
+evaluation-service   evaluation-service-hpa   Deployment/evaluation-service   cpu: 1%/30%   MINPODS 1   MAXPODS 5   REPLICAS 1
+
+Condição do cluster: antes da coleta, os dois nós do tgmnodegroup foram ajustados para
+hop limit 2, mantendo IMDSv2 obrigatório, e reiniciados (10:33).
+
+Observação: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.

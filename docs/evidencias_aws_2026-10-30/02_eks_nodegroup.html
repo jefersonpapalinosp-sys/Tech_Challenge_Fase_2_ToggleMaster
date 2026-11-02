@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; background: #0f172a; color: #e5e7eb; }
+  body { padding: 34px; font-family: Consolas, "Cascadia Mono", monospace; }
+  .frame { border: 1px solid #334155; border-radius: 14px; overflow: hidden; box-shadow: 0 14px 36px rgba(0,0,0,.35); }
+  .bar { background: #172033; padding: 16px 22px; color: #ffb347; font: 700 20px Arial, sans-serif; border-bottom: 1px solid #334155; }
+  pre { margin: 0; padding: 24px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 16px; line-height: 1.38; }
+</style>
+</head>
+<body><div class="frame"><div class="bar">AWS • ToggleMaster • Evidência técnica</div><pre>TOGGLEMASTER - EVID&#202;NCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Regi&#227;o: us-east-1 | Data: 2026-10-30 22:04:45 -03:00
+
+EKS e Managed Node Group
+========================
+
+Comando equivalente:
+aws eks describe-cluster / describe-nodegroup
+
+Sa&#237;da:
+---------------------------------------------
+|              DescribeCluster              |
++-----------------+-------------------------+
+|  ClusterSG      |  sg-079be737f17db5c6b   |
+|  EndpointPublic |  True                   |
+|  Name           |  ekstogglemaster        |
+|  Status         |  ACTIVE                 |
+|  Version        |  1.37                   |
+|  VpcId          |  vpc-09d66ad83422a42ee  |
++-----------------+-------------------------+
+---------------------------------------------------------------------
+|                         DescribeNodegroup                         |
++--------------+----------+------+------+----------------+----------+
+| CapacityType | Desired  | Max  | Min  |     Name       | Status   |
++--------------+----------+------+------+----------------+----------+
+|  ON_DEMAND   |  2       |  4   |  1   |  tgmnodegroup  |  ACTIVE  |
++--------------+----------+------+------+----------------+----------+
+||                          InstanceTypes                          ||
+|+-----------------------------------------------------------------+|
+||  t3.medium                                                      ||
+|+-----------------------------------------------------------------+|
+NAME                         STATUS   ROLES    AGE    VERSION               INTERNAL-IP   EXTERNAL-IP    OS-IMAGE                        KERNEL-VERSION                            CONTAINER-RUNTIME
+ip-10-0-1-114.ec2.internal   Ready    &lt;none&gt;   3h9m   v1.37.1-eks-577a51e   10.0.1.114    100.55.66.58   Amazon Linux 2023.12.20261026   6.18.56-125.164.amzn2023.x86_64 (amd64)   containerd://2.3.7+unknown
+ip-10-0-2-190.ec2.internal   Ready    &lt;none&gt;   3h9m   v1.37.1-eks-577a51e   10.0.2.190    3.91.95.185    Amazon Linux 2023.12.20261026   6.18.56-125.164.amzn2023.x86_64 (amd64)   containerd://2.3.7+unknown
+
+Observa&#231;&#227;o: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.</pre></div></body>
+</html>

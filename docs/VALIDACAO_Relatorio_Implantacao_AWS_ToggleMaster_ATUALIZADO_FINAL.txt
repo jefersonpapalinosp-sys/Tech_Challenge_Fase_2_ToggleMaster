@@ -1,0 +1,177 @@
+PARECER HISTÓRICO — REVISÃO ANTERIOR À ATUALIZAÇÃO FINAL
+Em 31/10/2026, o relatório foi reescrito para o LAB 2 e exportado em DOCX/PDF/TXT.
+O parecer abaixo se refere exclusivamente à versão antiga de 29/10, preservada
+em docs/historico/Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL_LAB1_20261029.docx.
+Para a entrega, usar os arquivos de apresentacao/entrega_final. Os limites de
+comprovação e os campos reservados continuam explicitados na versão atual.
+
+PARECER DE VALIDAÇÃO — 31/10/2026
+Arquivo: Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL.docx
+Revisão declarada no documento: 29/10/2026.
+
+CONCLUSÃO
+O documento não está atualizado para representar a implantação do LAB 2 usada
+na apresentação. Ele documenta outro laboratório e pode ser preservado como
+registro histórico. Não está pronto como relatório final de entrega do LAB 2.
+
+Escopo: revisão documental, leitura dos manifestos e das evidências locais.
+Nenhuma consulta à AWS, carga, alteração de infraestrutura ou execução dos
+comandos do relatório foi realizada nesta revisão. Não foram verificados os
+conteúdos dos vídeos nem o acesso público ao repositório. Os estados abaixo são
+datados; não constituem garantia de disponibilidade atual da AWS.
+O DOCX original foi preservado. Este parecer não substitui o relatório de entrega.
+
+1. IDENTIDADE E RECURSOS — AJUSTE PRIORITÁRIO
+Referências no relatório: capa, seção 2, seção 17.1, seção 19 e apêndice final.
+Comparação com as evidências do LAB 2 de 30/10 e os manifestos atuais:
+
+Item                     | Relatório de 29/10             | LAB 2 documentado
+Conta                    | 058264096738                   | 533267349027
+Cluster EKS              | eks-togglemaster               | ekstogglemaster
+Managed Node Group       | eks-nodegroup-academy-v2        | tgmnodegroup
+VPC                      | vpc-0ecf1861ef9b39911            | vpc-09d66ad83422a42ee
+Prefixo dos ECR          | ecr/                           | namespace/
+ECR do flag-service      | ecr/flag-service:v1             | namespace/lag-service:v1
+RDS auth                 | db-auth-service                | db-authservice
+RDS flag                 | db-flag-service                | dbflags
+RDS targeting            | db-targeting-service           | dbtargeting
+Redis                    | redis-evaluation-service       | redisevaluation
+SQS                      | evaluation-analytics-queue     | tgmqueue
+Load Balancer observado  | Network Load Balancer          | Classic Load Balancer
+Service do Ingress       | ingress-nginx-controller       | my-release-ingress-nginx-controller
+
+Namespaces finais do LAB 2: auth-service, flag-service, targeting-service,
+evaluation-service e analytics-service. Os comandos antigos usam auth, flag,
+targeting, evaluation e analytics. Os Kustomizations atuais substituem os
+namespaces dos arquivos base; ler somente metadata.namespace do base induz erro.
+
+ECR completo do flag no LAB 2:
+533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/lag-service:v1
+O nome lag-service é o repositório existente, não um erro a corrigir para flag-service.
+
+Endpoint HTTP observado em 30/10 no LAB 2:
+http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com
+O DNS ae6a5981... do relatório pertence ao registro antigo. Consultar novamente
+o Service antes de uma execução; o endereço pode mudar se o LB for recriado.
+
+Não fazer substituição global sobre outputs e imagens de 29/10: isso atribuiria
+evidências históricas a recursos diferentes. Preservar o histórico identificado
+e inserir uma seção nova, datada, com os recursos e as evidências do LAB 2.
+Roles, launch template, versões dos add-ons e topologia Redis também precisam
+vir da evidência do LAB correto, sem transportar valores do laboratório antigo.
+
+2. ESCALABILIDADE — DIFERENCIAR EVALUATION E ANALYTICS
+Referências no relatório: seções 15, 17.1.6, 19 e apêndice final.
+A afirmação de que nenhum teste de carga foi executado é histórica e não
+representa todas as evidências hoje disponíveis para o LAB 2.
+
+A evidência docs/evidencias_aws_2026-10-30/13_hpa_antes_durante_depois.txt
+contém uma coleta de 31/10/2026, 00:59:22 a 01:02:31 (-03:00), apesar do nome
+da pasta mencionar 30/10. Flag: smoke-aws-1793419004.
+- Evaluation: iniciou com uma réplica; o HPA solicitou aumento; o snapshot
+  mostrou Deployment 2/5 e cinco pods Running, dos quais dois estavam Ready.
+- A linha do tempo posterior registrou HPA atual/desejado=5 e deployment=5;
+  depois houve retorno a uma réplica, com Deployment 1/1.
+- Não afirmar que o snapshot mostra cinco pods Ready: ele mostra dois Ready.
+- O resumo maxEvaluation=2 não captura o pico posterior de cinco registrado
+  na linha do tempo. Apresentar a sequência, não esse resumo isoladamente.
+- Analytics permaneceu com uma réplica. A prova de scale-out do analytics
+  continua pendente nas evidências examinadas.
+
+A cópia do arquivo 13 em apresentacao/evidencias registra outro ensaio.
+Não combinar as duas coletas como se fossem a mesma execução.
+
+O enunciado (página 9) pede envio manual de mensagens SQS e demonstração do
+analytics escalando. HPA configurado, fila consumida e evento persistido não
+substituem essa prova. O volume de mensagens, sozinho, não garante escala por CPU.
+
+3. COMANDOS E CRITÉRIOS DE TESTE
+Seções 11 a 15: revisar namespaces, nome da release/Service e conta antes de
+usar qualquer comando. Aplicar um external-secret.yaml base com -f não recebe
+a transformação de namespace feita pelo Kustomize atual.
+
+Seção 15.2: ForEach-Object -Parallel exige PowerShell 7, como o próprio texto
+informa. O terminal usado pelo apresentador é Windows PowerShell 5.1.
+Os comandos com -SkipHttpErrorCheck também precisam de PowerShell compatível.
+Preferir a sequência atual de apresentacao/08_COMANDOS_SOMENTE_PARTE_B.txt.
+Não apresentar os blocos do relatório como diretamente compatíveis com PS 5.1.
+
+Foram examinados estaticamente 42 blocos PowerShell, sem execução.
+O bloco de diagnóstico contém marcadores <POD>/<NAMESPACE>/<NOME>, que devem
+ser substituídos antes de colar no terminal. Ausência de erro de sintaxe nos
+demais blocos não comprova compatibilidade, autorização ou sucesso operacional.
+
+Seção 14.3: aumento do COUNT global no DynamoDB pode vir de outra chamada.
+Confirmar o evento do ensaio por flag_name/user_id exclusivos e registrar seu
+event_id. result=true não garante sozinho a publicação/consumo assíncrono.
+Referência disponível: scripts/test-aws-deployment.ps1, que consulta a flag do teste.
+
+Seção 15.3: o bloco de 3.000 mensagens descarta a saída de send-message-batch
+sem verificar exit code e o campo Failed; falhas parciais podem passar despercebidas.
+Preferir apresentacao/scripts/03-enviar-eventos-sqs.ps1, com RunId e verificação
+de falhas, acompanhado da observação de HPA/pods e correlação no DynamoDB.
+Isso indica um procedimento disponível; não significa que ele foi executado
+ou que o scale-out de analytics foi comprovado nesta revisão.
+
+O enunciado cita hey, ab ou Postman para a carga do evaluation. O bloco do
+relatório usa Invoke-WebRequest e as evidências recentes usam pods geradores.
+Para aderência literal, registrar a demonstração com uma das ferramentas citadas.
+
+4. PRECISÃO TÉCNICA E DIFERENÇAS DO ENUNCIADO
+- LocalStack: o relatório já explica corretamente que emula SQS/DynamoDB e
+  não é o DynamoDB Local literal pedido. Preservar essa distinção; a aceitação
+  da adaptação não foi confirmada nesta validação.
+- Load Balancer: evidência 11 do LAB 2 identifica Classic. O enunciado menciona
+  ALB/NLB. Registrar e resolver a divergência; mudar apenas o nome no texto não
+  altera o recurso implantado nem comprova atendimento.
+- RDS: a checklist diz regras restritas ao EKS. A evidência 08 inclui origem
+  administrativa IPv4 /32 além do SG do EKS. Descrever ambas; RDS privado não
+  significa que a única origem autorizada no SG seja o EKS.
+- Analytics: o quadro de probes diz apenas TCP. O manifesto atual tem readiness
+  HTTP /health; startup e liveness usam TCP. Atualizar essa explicação.
+- IMDS: não apresentar hop limit 2 como isolamento IAM dos pods. É um workaround
+  do laboratório; roles e políticas devem corresponder à coleta identificada.
+- As seções 17.1 e a caixa ESCOPO DA EVIDÊNCIA citam 23:04 e 21:27:55 de 29/10.
+  Identificar quais tabelas pertencem a cada coleta, sem tratá-las como simultâneas.
+
+5. ENTREGÁVEIS — PÁGINAS 9 E 10 DO ENUNCIADO
+Não encontrados neste arquivo:
+[ ] Nomes dos participantes.
+[ ] RMs dos participantes.
+[ ] Usernames do Discord.
+[ ] Link acessível do vídeo final.
+[ ] Vídeo final conferido com duração de até 20 minutos.
+[ ] Exportação do relatório final em PDF ou TXT (o arquivo examinado é DOCX).
+
+Foi encontrado um hyperlink de repositório na seção 20:
+https://github.com/jefersonpapalinosp-sys/Tech_Challenge_Fase_2_ToggleMaster
+A existência do link foi verificada; sua disponibilidade pública não foi testada.
+
+As seis gravações apresentadas no chat somam 31min22s. A 1,25x ficam em
+aproximadamente 25min06s, acima do limite. A 1,6x ficam em 19min36s, antes de
+eventuais introduções/transições. Conferir duração e clareza do arquivo exportado.
+
+Para a demonstração, complementar a cobertura de Dockerfiles/otimizações e
+explicar a escolha de HPA por CPU no Academy e KEDA como alternativa. KEDA é
+opcional; sua ausência não é, por si só, falha de implementação.
+Explicar explicitamente os propósitos de RDS, Redis e DynamoDB.
+
+6. ORDEM SUGERIDA PARA FECHAR A ENTREGA
+1) Identificar o relatório antigo como histórico e incorporar o estado do LAB 2
+   com suas fontes datadas, recursos reais e comandos compatíveis.
+2) Incorporar o ensaio de evaluation e produzir a prova ainda ausente de analytics.
+3) Tratar as diferenças Classic/ALB-NLB e LocalStack/DynamoDB Local.
+4) Preencher integrantes, RM, Discord, repositório e vídeo.
+5) Conferir vídeo final <=20 minutos, gerar PDF/TXT e testar os links de entrega.
+
+FONTES LOCAIS EXAMINADAS
+- docs/POSTECH - Tech Challenge - Fase 2.pdf, especialmente páginas 4 a 10.
+- docs/Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL.docx.
+- docs/evidencias_aws_2026-10-30/01_identidade.txt a 13_hpa_antes_durante_depois.txt.
+- docs/EVIDENCIAS_AWS_LAB_2026-10-30.md.
+- docker-compose.yml e k8s-aws (Deployments, ConfigMaps e Kustomizations).
+- apresentacao/01_VALIDACAO_E_PENDENCIAS.txt e 06_URLS_E_NOMES_DO_LAB.txt.
+- apresentacao/07_ORDEM_DO_ENUNCIADO.txt e 08_COMANDOS_SOMENTE_PARTE_B.txt.
+
+SHA256 do DOCX original preservado:
+235981EBCEE8BD70F3DB6771CB9621F35F37BE28F0BDA5B7C2C8F33119A43630

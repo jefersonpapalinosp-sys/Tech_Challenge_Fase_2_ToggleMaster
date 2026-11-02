@@ -1,0 +1,110 @@
+TOGGLEMASTER - EVIDÊNCIA AWS CLI / KUBERNETES
+Conta: 533267349027 | Região: us-east-1 | Data: 2026-10-30 22:05:05 -03:00
+
+Security Groups: EKS para RDS e Redis
+=====================================
+
+Comando equivalente:
+aws ec2 describe-security-groups
+
+Saída:
+{
+    "Id": "sg-079be737f17db5c6b",
+    "Name": "eks-cluster-sg-ekstogglemaster-1849635779",
+    "Vpc": "vpc-09d66ad83422a42ee",
+    "Ingress": [
+        {
+            "Protocol": "-1",
+            "From": null,
+            "To": null,
+            "SourceSG": [
+                "sg-079be737f17db5c6b",
+                "sg-01d2e25d53c914258"
+            ],
+            "IPv4": []
+        }
+    ]
+}
+{
+    "Id": "sg-040bd24ce7d5d78c9",
+    "Name": "sgdbauth",
+    "Vpc": "vpc-09d66ad83422a42ee",
+    "Ingress": [
+        {
+            "Protocol": "tcp",
+            "From": 5432,
+            "To": 5432,
+            "SourceSG": [
+                "sg-079be737f17db5c6b"
+            ],
+            "IPv4": [
+                "152.245.x.x/32"
+            ]
+        }
+    ]
+}
+{
+    "Id": "sg-0992b8d82f96040eb",
+    "Name": "sgflags",
+    "Vpc": "vpc-09d66ad83422a42ee",
+    "Ingress": [
+        {
+            "Protocol": "tcp",
+            "From": 5432,
+            "To": 5432,
+            "SourceSG": [
+                "sg-079be737f17db5c6b"
+            ],
+            "IPv4": [
+                "152.245.x.x/32"
+            ]
+        }
+    ]
+}
+{
+    "Id": "sg-0c7417910e3b14dc4",
+    "Name": "sgdbtargeting",
+    "Vpc": "vpc-09d66ad83422a42ee",
+    "Ingress": [
+        {
+            "Protocol": "tcp",
+            "From": 5432,
+            "To": 5432,
+            "SourceSG": [
+                "sg-079be737f17db5c6b"
+            ],
+            "IPv4": [
+                "152.245.x.x/32"
+            ]
+        }
+    ]
+}
+{
+    "Id": "sg-05eb72e24a646803e",
+    "Name": "default",
+    "Vpc": "vpc-09d66ad83422a42ee",
+    "Ingress": [
+        {
+            "Protocol": "-1",
+            "From": null,
+            "To": null,
+            "SourceSG": [
+                "sg-05eb72e24a646803e"
+            ],
+            "IPv4": []
+        },
+        {
+            "Protocol": "tcp",
+            "From": 6379,
+            "To": 6379,
+            "SourceSG": [
+                "sg-079be737f17db5c6b"
+            ],
+            "IPv4": []
+        }
+    ]
+}
+
+Observação: nenhum valor de senha, token, MASTER_KEY ou API key foi exibido.
+
+Observação: o IP administrativo foi mascarado para publicação (152.245.x.x/32); nenhuma outra saída foi alterada.

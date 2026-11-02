@@ -5,4 +5,4 @@ metadata:
   namespace: flag
 data:
   PORT: "8002"
-  AUTH_SERVICE_URL: "http://auth-service.auth.svc.cluster.local:8001"
+  AUTH_SERVICE_URL: "http://auth-service.auth-service.svc.cluster.local:8001"

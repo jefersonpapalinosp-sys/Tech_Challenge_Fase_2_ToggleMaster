@@ -1,0 +1,123 @@
+# REGRAVACAO — ANALYTICS ESCALANDO (SQS -> HPA -> DYNAMODB) — POWERSHELL
+# Copiar UM BLOCO POR VEZ para o terminal indicado e pressionar Enter.
+# Os comentarios com # explicam o que fazer; nao precisam ser lidos no video.
+# A fala de cada bloco esta em FALAS_ANALYTICS_HPA.txt (mesma numeracao).
+# Gravar dentro da MESMA sessao do LAB (cerca de 4 horas).
+
+# ============================================================
+# BLOCO 0 — PREPARACAO (ANTES DE GRAVAR, FORA DO VIDEO)
+# ============================================================
+# Lab ativo e docs\LAB 2.txt atualizado.
+# Abrir DOIS terminais no VS Code (botao +) e rodar este bloco NOS DOIS:
+Set-Location 'C:\Users\Jeferson\Desktop\Fase 2 Tech FIAP'
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+. .\apresentacao\scripts\01-preparar-sessao.ps1
+cls
+
+# Conferencias (em qualquer um dos terminais):
+# Esperado: 2 nos Ready; TARGETS com numero (ex.: cpu: 1%/30%), nao <unknown>.
+kubectl get nodes
+kubectl get hpa -n analytics-service
+kubectl get pods -n analytics-service -l app=analytics-service
+cls
+
+# Se "kubectl get nodes" mostrar "No resources found", usar o BLOCO 9 no fim do arquivo.
+# Se houve ensaio antes, esperar a fila zerar (o BLOCO 1 mostra fila=0) antes de gravar.
+
+# ============================================================
+# >>> INICIAR A GRAVACAO AQUI <<<
+# ============================================================
+
+# ============================================================
+# BLOCO 1 — TERMINAL 2: LINHA DO TEMPO (deixar rodando)
+# ============================================================
+# Mostra a cada 10 s: fila SQS, CPU do HPA e replicas. Dura 7 minutos.
+.\apresentacao\scripts\05-acompanhar-analytics.ps1 -Seconds 420
+
+# ============================================================
+# BLOCO 2 — TERMINAL 1: ESTADO ANTES DO ENVIO          (FALA 1)
+# ============================================================
+Get-Date
+kubectl get hpa -n analytics-service
+kubectl get pods -n analytics-service -l app=analytics-service
+
+# ============================================================
+# BLOCO 3 — TERMINAL 1: ENVIO MANUAL DE 6000 MENSAGENS  (FALA 2)
+# ============================================================
+# Nao fechar este terminal: a variavel $envio e usada no BLOCO 6.
+$envio = python .\apresentacao\scripts\04-carga-analytics-sqs.py --count 6000 | ConvertFrom-Json
+$envio | Format-List RunId,MessagesSent,Queue
+
+# ============================================================
+# TERMINAL 2: ACOMPANHAR A FILA E A CPU SUBINDO         (FALA 3)
+# ============================================================
+# Sem comando: clicar no terminal 2 e esperar "desejada=" passar de 1.
+# Isso costuma levar de 30 s a 1 min. Pode ficar em silencio na espera (sera cortada).
+
+# ============================================================
+# BLOCO 4 — TERMINAL 1: HPA ESCALANDO                   (FALA 4)
+# ============================================================
+# Rodar SOMENTE quando o terminal 2 mostrar desejada maior que 1.
+kubectl get hpa -n analytics-service
+kubectl get pods -n analytics-service -l app=analytics-service
+kubectl top pods -n analytics-service
+
+# ============================================================
+# BLOCO 5 — TERMINAL 2: FILA ESVAZIANDO E VOLTA A 1     (FALA 5)
+# ============================================================
+# Sem comando: mostrar o terminal 2 com fila caindo ate 0 e,
+# 1 a 2 minutos depois, replicas voltando para 1. Conferir no terminal 1:
+kubectl get hpa -n analytics-service
+
+# ============================================================
+# BLOCO 6 — TERMINAL 1: EVENTOS DO LOTE NO DYNAMODB      (FALA 6)
+# ============================================================
+# Rodar depois que a fila zerar (terminal 2 com fila=0).
+if (-not $envio.RunId) { throw 'Execute o BLOCO 3 neste terminal primeiro.' }
+$dadosJson = aws dynamodb scan --table-name ToggleMasterAnalytics --region us-east-1 --output json
+if ($LASTEXITCODE -ne 0) { throw 'Falha ao consultar DynamoDB.' }
+$dados = $dadosJson | ConvertFrom-Json
+$eventos = @($dados.Items | Where-Object { $_.flag_name.S -eq $envio.RunId })
+$eventos | Select-Object -First 10 | ForEach-Object {
+    [pscustomobject]@{
+        Evento = $_.event_id.S
+        Lote = $_.flag_name.S
+        Usuario = $_.user_id.S
+        Resultado = $_.result.BOOL
+        Data = $_.timestamp.S
+    }
+} | Format-Table -AutoSize
+'Eventos encontrados neste lote: ' + $eventos.Count
+
+# Se a contagem vier menor que 6000, a fila ainda estava sendo consumida:
+# esperar alguns segundos e repetir o BLOCO 6. NAO reenviar mensagens.
+
+# ============================================================
+# BLOCO 7 — TERMINAL 1: CONFERENCIA FINAL               (FALA 7)
+# ============================================================
+kubectl get hpa -A
+
+# ============================================================
+# >>> PARAR A GRAVACAO AQUI <<<
+# ============================================================
+# No terminal 2, se ainda estiver rodando: Ctrl+C.
+
+# ============================================================
+# BLOCO 8 — SE NAO ESCALAR (somente no ensaio)
+# ============================================================
+# Se "desejada" ficar em 1: nao narrar que escalou, nao usar kubectl scale
+# e nao baixar o alvo do HPA. Esperar a fila zerar e repetir o BLOCO 3 com mais carga:
+$envio = python .\apresentacao\scripts\04-carga-analytics-sqs.py --count 10000 --threads 16 | ConvertFrom-Json
+$envio | Format-List RunId,MessagesSent,Queue
+
+# ============================================================
+# BLOCO 9 — SE OS NOS SUMIREM DO CLUSTER (antes de gravar)
+# ============================================================
+# Acontece quando a sessao do LAB expira e as instancias sao trocadas.
+# 1) Listar as instancias dos nos:
+aws ec2 describe-instances --region us-east-1 --filters "Name=tag:eks:cluster-name,Values=ekstogglemaster" "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].InstanceId" --output text
+# 2) Para CADA ID listado, ajustar o hop limit para 2 (trocar <ID>):
+aws ec2 modify-instance-metadata-options --region us-east-1 --instance-id <ID> --http-tokens required --http-endpoint enabled --http-put-response-hop-limit 2
+# 3) Reiniciar as instancias (trocar <ID1> <ID2>) e esperar 1 a 2 minutos:
+aws ec2 reboot-instances --region us-east-1 --instance-ids <ID1> <ID2>
+kubectl get nodes

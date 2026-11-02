@@ -1,0 +1,1 @@
+Excertos para apresentar, não um pacote de deploy. Namespaces dos arquivos-base são substituídos pelo Kustomize. Não executar kubectl apply nesta pasta. Aplicação completa depende de k8s-aws na raiz.

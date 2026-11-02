@@ -1,30 +1,30 @@
 # ToggleMaster no EKS — manifestos AWS
 
-Esta árvore contém os manifestos do ambiente AWS da conta `058264096738`, região `us-east-1`. O conjunto foi aplicado ao cluster `eks-togglemaster` em 29/10/2026. Editar os arquivos ou executar `kubectl kustomize` apenas localmente não altera a AWS; uma mudança só entra no cluster após `kubectl apply` ou uma atualização Helm.
+Esta árvore contém os manifestos do ambiente AWS da conta `533267349027`, região `us-east-1`. O conjunto foi aplicado ao cluster `ekstogglemaster` em 30/10/2026. Editar os arquivos ou executar `kubectl kustomize` apenas localmente não altera a AWS; uma mudança só entra no cluster após `kubectl apply` ou uma atualização Helm.
 
 ## O que está configurado
 
 | Componente | Configuração AWS |
 |---|---|
-| Imagens | ECR privado `058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/*` |
-| SQS | `evaluation-analytics-queue` |
+| Imagens | ECR privado `533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/*` |
+| SQS | `tgmqueue` |
 | DynamoDB | `ToggleMasterAnalytics` |
 | Redis | ElastiCache em cluster mode, por meio de `REDIS_URL` no Secrets Manager |
 | Bancos | Três RDS PostgreSQL privados, por meio de `DATABASE_URL` no Secrets Manager |
 | Segredos | Secrets Manager → External Secrets Operator → Secret Kubernetes |
 | Escala | HPA de evaluation e analytics com alvo de CPU de 30% |
-| Entrada | Nginx Ingress publicado por NLB, com rotas `/auth`, `/flags`, `/rules` e `/evaluate` |
+| Entrada | Nginx Ingress publicado por Classic Load Balancer, com rotas `/auth`, `/flags`, `/rules` e `/evaluate` |
 
 O analytics é um worker e não tem Ingress público. Sua liveness probe é TCP na porta `8005`.
 
-## Estado implantado em 29/10/2026
+## Estado implantado em 30/10/2026
 
 | Item | Estado |
 |---|---|
-| Cluster | `eks-togglemaster` ativo, com dois nós Ready |
-| Ingress | NLB internet-facing, estado `active` |
-| Endpoint atual | `http://ae6a5981f8069438481a714114fef81d-9676d8a498457cbb.elb.us-east-1.amazonaws.com` |
-| Imagem evaluation | `058264096738.dkr.ecr.us-east-1.amazonaws.com/ecr/evaluation-service:v3` |
+| Cluster | `ekstogglemaster` ativo, com dois nós `t3.medium` Ready |
+| Ingress | Classic Load Balancer internet-facing, com dois nós `InService` |
+| Endpoint atual | `http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com` |
+| Imagem evaluation | `533267349027.dkr.ecr.us-east-1.amazonaws.com/namespace/evaluation-service:v3` |
 | Segredos | Quatro `ExternalSecret` com `SecretSynced=True` |
 | Bancos | Três Jobs de inicialização concluídos |
 | Teste funcional | Auth → Flag → Targeting → Evaluation → SQS → Analytics → DynamoDB aprovado |
@@ -50,7 +50,7 @@ Não grave credenciais nos YAMLs. Os `ExternalSecret` esperam estes documentos J
 
 ```json
 {
-  "DATABASE_URL": "postgres://<USUARIO>:<SENHA_URL_ENCODED>@db-auth-service.c7yswag6apmj.us-east-1.rds.amazonaws.com:5432/postgres?sslmode=require",
+  "DATABASE_URL": "postgres://<USUARIO>:<SENHA_URL_ENCODED>@<ENDPOINT_DB_AUTHSERVICE>:5432/postgres?sslmode=require",
   "MASTER_KEY": "<CHAVE_FORTE>"
 }
 ```
@@ -59,7 +59,7 @@ Não grave credenciais nos YAMLs. Os `ExternalSecret` esperam estes documentos J
 
 ```json
 {
-  "DATABASE_URL": "postgres://<USUARIO>:<SENHA_URL_ENCODED>@db-flag-service.c7yswag6apmj.us-east-1.rds.amazonaws.com:5432/postgres?sslmode=require"
+  "DATABASE_URL": "postgres://<USUARIO>:<SENHA_URL_ENCODED>@<ENDPOINT_DBFLAGS>:5432/postgres?sslmode=require"
 }
 ```
 
@@ -67,7 +67,7 @@ Não grave credenciais nos YAMLs. Os `ExternalSecret` esperam estes documentos J
 
 ```json
 {
-  "DATABASE_URL": "postgres://<USUARIO>:<SENHA_URL_ENCODED>@db-targeting-service.c7yswag6apmj.us-east-1.rds.amazonaws.com:5432/postgres?sslmode=require"
+  "DATABASE_URL": "postgres://<USUARIO>:<SENHA_URL_ENCODED>@<ENDPOINT_DBTARGETING>:5432/postgres?sslmode=require"
 }
 ```
 
@@ -75,7 +75,7 @@ Não grave credenciais nos YAMLs. Os `ExternalSecret` esperam estes documentos J
 
 ```json
 {
-  "REDIS_URL": "rediss://:<TOKEN_URL_ENCODED>@clustercfg.redis-evaluation-service.ifqrsm.use1.cache.amazonaws.com:6379",
+  "REDIS_URL": "rediss://:<AUTH_TOKEN_URL_ENCODED>@<ENDPOINT_CONFIGURACAO_REDISEVALUATION>:6379",
   "SERVICE_API_KEY": "<CHAVE_GERADA_PELO_AUTH_SERVICE>"
 }
 ```
@@ -84,31 +84,20 @@ As instâncias RDS atuais não têm banco inicial customizado; por isso as URLs 
 
 ## Ordem segura de aplicação
 
-Primeiro, crie a estrutura do cluster e confirme que o acesso ao Secrets Manager está válido:
-
-```bash
-kubectl apply -f cluster/namespaces.yaml
-kubectl apply -f cluster/cluster-secret-store.yaml
-kubectl get clustersecretstore aws-secrets-manager
-```
-
-Depois, sincronize os quatro segredos:
-
-```bash
-kubectl apply -f auth/external-secret.yaml \
-  -f flag/external-secret.yaml \
-  -f targeting/external-secret.yaml \
-  -f evaluation/external-secret.yaml
-kubectl get externalsecret -A
-```
-
-Espere `SecretSynced` e então aplique o conjunto completo:
+O Kustomize aplica os namespaces reais `auth-service`, `flag-service`, `targeting-service`, `evaluation-service` e `analytics-service`. Aplique o conjunto e confirme o acesso ao Secrets Manager:
 
 ```bash
 kubectl apply -k .
-kubectl wait --for=condition=complete job/auth-db-init -n auth --timeout=180s
-kubectl wait --for=condition=complete job/flag-db-init -n flag --timeout=180s
-kubectl wait --for=condition=complete job/targeting-db-init -n targeting --timeout=180s
+kubectl get clustersecretstore aws-secrets-manager
+kubectl get externalsecret -A
+```
+
+Espere `SecretSynced` e acompanhe os Jobs e workloads:
+
+```bash
+kubectl wait --for=condition=complete job/auth-db-init -n auth-service --timeout=180s
+kubectl wait --for=condition=complete job/flag-db-init -n flag-service --timeout=180s
+kubectl wait --for=condition=complete job/targeting-db-init -n targeting-service --timeout=180s
 kubectl get pods,svc,ingress,hpa -A
 ```
 

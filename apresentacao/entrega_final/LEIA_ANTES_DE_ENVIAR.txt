@@ -1,0 +1,20 @@
+﻿ENTREGA FINAL — TOGGLEMASTER / FIAP FASE 2
+Revisão: 02/11/2026. Conta AWS: 533267349027.
+
+Use Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL.pdf para leitura/entrega.
+O DOCX é editável; o TXT contém o mesmo conteúdo textual do relatório.
+A pasta evidencias contém 13 saídas datadas de AWS CLI/kubectl e o ensaio 14, de 02/11, com quadros da
+gravação. Nenhum desses arquivos contém credenciais.
+
+ANTES DE ENVIAR
+1. Preencher RM e Discord dos cinco integrantes na capa do Word.
+2. Inserir o link do vídeo. Duração conferida: 18:19; atualizar se o vídeo for editado de novo.
+3. Conferir acesso ao vídeo e ao repositório pelo avaliador.
+4. Conteúdo do vídeo conferido em 02/11: envio manual SQS, escala de analytics e persistência.
+   Enviar ToggleMaster_Fase2_Video_Final_v6.mp4, a versão com o IP mascarado.
+5. Após qualquer edição no Word, salvar/exportar novamente em PDF.
+
+O pacote não contém os arquivos de vídeo nem é um pacote para executar o projeto.
+Não enviar o relatório histórico do LAB 1 como descrição do LAB 2.
+LocalStack versus DynamoDB Local e Classic versus ALB/NLB estão explicitados.
+As coletas são datadas e não garantem que o laboratório esteja ativo no momento.

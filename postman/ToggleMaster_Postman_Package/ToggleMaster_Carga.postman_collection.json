@@ -1,0 +1,267 @@
+{
+  "info": {
+    "_postman_id": "f11932c3-14f4-4f97-a1c0-51a98eb6c98d",
+    "name": "ToggleMaster - Teste de Carga AWS",
+    "description": "Preparação, teste de carga do Evaluation Service e limpeza dos dados de teste.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Preparação (executar uma vez)",
+      "item": [
+        {
+          "name": "Criar flag de carga",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get('api_key')) {",
+                  "    throw new Error('Defina a variável secreta api_key no ambiente ToggleMaster AWS - Carga.');",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Flag criada ou já existente', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{flag_name}}\",\n  \"description\": \"Flag para teste de carga via Postman\",\n  \"is_enabled\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/flags",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "flags"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar regra de 100%",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Regra criada ou já existente', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"flag_name\": \"{{flag_name}}\",\n  \"is_enabled\": true,\n  \"rules\": {\n    \"type\": \"PERCENTAGE\",\n    \"value\": 100\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/rules",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "rules"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Teste de carga (modo Performance)",
+      "item": [
+        {
+          "name": "Avaliar flag",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get('flag_name')) {",
+                  "    throw new Error('Defina flag_name e execute a pasta de preparação antes da carga.');",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Decisão da flag é true', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.result).to.eql(true);",
+                  "});",
+                  "",
+                  "const maxResponseMs = Number(pm.environment.get('max_response_ms') || 2000);",
+                  "pm.test(`Resposta abaixo de ${maxResponseMs} ms`, function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(maxResponseMs);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/evaluate?user_id=load-{{$randomUUID}}&flag_name={{flag_name}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "evaluate"
+              ],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "load-{{$randomUUID}}"
+                },
+                {
+                  "key": "flag_name",
+                  "value": "{{flag_name}}"
+                }
+              ]
+            },
+            "description": "Cada chamada também publica um evento no SQS, consumido pelo Analytics Service e gravado no DynamoDB."
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Limpeza (executar uma vez)",
+      "item": [
+        {
+          "name": "Excluir regra",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Regra removida ou inexistente', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([204, 404]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/rules/{{flag_name}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "rules",
+                "{{flag_name}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Excluir flag",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Flag removida ou inexistente', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([204, 404]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/flags/{{flag_name}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "flags",
+                "{{flag_name}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

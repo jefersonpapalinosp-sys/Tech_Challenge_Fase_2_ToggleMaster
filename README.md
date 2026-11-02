@@ -1,6 +1,25 @@
 # ToggleMaster — Tech Challenge Fase 2
 
-Implementação completa, local e em AWS, da arquitetura de microsserviços descrita no arquivo **POSTECH - Tech Challenge - Fase 2**.
+Implementação local e em AWS da arquitetura de microsserviços descrita no **POSTECH - Tech Challenge - Fase 2**. O relatório final distingue configuração, evidência coletada e itens ainda sem comprovação.
+
+## Código e entrega
+
+O código da Fase 2 está em [`fase2/` no repositório do grupo](https://github.com/jefersonpapalinosp-sys/Tech-challenge-grupo-2/tree/main/fase2). A raiz desse repositório preserva o projeto da Fase 1.
+
+```powershell
+git clone https://github.com/jefersonpapalinosp-sys/Tech-challenge-grupo-2.git
+Set-Location .\Tech-challenge-grupo-2\fase2
+```
+
+- [Relatório final em PDF](docs/Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL.pdf)
+- [Relatório final em Word](docs/Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL.docx)
+- [Relatório em texto, incluindo comparação com os entregáveis](docs/Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL.txt)
+- [Conferência dos entregáveis](docs/CONFERENCIA_ENTREGAVEIS_FIAP.txt)
+- [Evidências datadas do LAB 2](docs/evidencias_aws_2026-10-30)
+- [Ensaio de escala do analytics, 02/11/2026](docs/evidencias_aws_2026-11-02)
+- [Scripts e comandos do ensaio](apresentacao/scripts)
+
+O relatório explica a escolha de HPA por CPU para o analytics e os propósitos de RDS, ElastiCache e DynamoDB. Os ensaios arquivados comprovam a escala de evaluation e, em 02/11/2026, a de analytics: 6000 mensagens enviadas manualmente ao SQS, de 1 para 5 réplicas por CPU, retorno a 1 réplica e 6000 eventos no DynamoDB. LocalStack e Classic Load Balancer são diferenças declaradas em relação aos produtos citados no enunciado.
 
 ## O que está incluído
 
@@ -29,9 +48,9 @@ O segundo PostgreSQL contém dois bancos lógicos, preservando os três bancos i
 Pré-requisito: Docker Desktop em execução com containers Linux.
 
 ```powershell
-Copy-Item .env.example .env
-.\scripts\start-local.ps1
-.\scripts\test-local.ps1
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-local.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-local.ps1
 ```
 
 O primeiro comando de subida baixa as imagens-base e compila os serviços. Para acompanhar:
@@ -75,6 +94,11 @@ GET  http://localhost:18005/health
 O projeto inclui um cluster isolado com `kind`; não é necessário ativar o Kubernetes do Docker Desktop. A primeira execução baixa o executável local, cria o cluster, instala Metrics Server e Nginx Ingress, carrega as cinco imagens e aplica os manifests:
 
 ```powershell
+# Preparacao necessaria antes de criar o cluster local:
+if (-not (Test-Path .\k8s\secret-local.yaml)) {
+    Copy-Item .\k8s\secret-local.example.yaml .\k8s\secret-local.yaml
+}
+# Edite secret-local.yaml e substitua CHANGE_ME conforme k8s/README.md.
 .\scripts\setup-kind.ps1
 .\scripts\test-k8s.ps1
 kubectl get pods -n togglemaster
@@ -104,15 +128,23 @@ Consulte [docs/COMPOSE-AWS.md](docs/COMPOSE-AWS.md) para endpoints, restrições
 
 ## Implantação no EKS
 
-O ambiente AWS Academy foi implantado no cluster `eks-togglemaster`, em `us-east-1`, usando ECR, três RDS PostgreSQL, ElastiCache Redis Cluster com TLS, SQS, DynamoDB, Secrets Manager, External Secrets Operator, HPA e Nginx Ingress publicado por NLB.
+O ambiente AWS Academy atual foi implantado na conta `533267349027`, cluster `ekstogglemaster`, em `us-east-1`, usando ECR, três RDS PostgreSQL, ElastiCache Redis Cluster com TLS, SQS, DynamoDB, Secrets Manager, External Secrets Operator, HPA e Nginx Ingress publicado por um Classic Load Balancer.
 
 Endpoint atual:
 
 ```text
-http://ae6a5981f8069438481a714114fef81d-9676d8a498457cbb.elb.us-east-1.amazonaws.com
+http://a5bc56a01f92c4e85887af601f04b84e-1447597342.us-east-1.elb.amazonaws.com
 ```
 
-Rotas públicas: `/auth`, `/flags`, `/rules` e `/evaluate`. O fluxo Auth → Flag → Targeting → Evaluation → SQS → Analytics → DynamoDB foi validado ponta a ponta. Consulte [k8s-aws/README.md](k8s-aws/README.md) para o estado implantado e [docs/RELATORIO-IMPLANTACAO-AWS.md](docs/RELATORIO-IMPLANTACAO-AWS.md) para o relatório final. A versão visual em Word está em `docs/Relatorio_Implantacao_AWS_ToggleMaster.docx`.
+Rotas públicas: `/auth`, `/flags`, `/rules` e `/evaluate`. O fluxo Auth → Flag → Targeting → Evaluation → SQS → Analytics → DynamoDB está registrado nas evidências datadas. Consulte [k8s-aws/README.md](k8s-aws/README.md) para a configuração e o [relatório final](docs/Relatorio_Implantacao_AWS_ToggleMaster_ATUALIZADO_FINAL.pdf) para os resultados e limites de comprovação. O endereço observado pode mudar se o Load Balancer for recriado.
+
+## Verificações estáticas
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\validate.ps1
+```
+
+Esse script valida o Compose, a sintaxe Python e a renderização dos manifestos locais/AWS sem aplicar mudanças ao cluster. Para o Kubernetes local, usa uma cópia temporária com o Secret de exemplo. Arquivos de credenciais do LAB, `.env` reais, kubeconfigs e pacotes privados não fazem parte do repositório; cada integrante deve configurar sua própria sessão AWS.
 
 ## Segurança local
 

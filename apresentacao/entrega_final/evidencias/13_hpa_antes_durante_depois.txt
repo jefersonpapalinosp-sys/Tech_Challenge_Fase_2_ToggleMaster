@@ -1,0 +1,58 @@
+TOGGLEMASTER - EVIDENCIA HPA NO AMAZON EKS
+Conta: 533267349027 | Regiao: us-east-1 | Inicio: 2026-10-31 00:59:22 -03:00
+Flag usada na carga: smoke-aws-1793419004
+
+=== ANTES DA CARGA ===
+NAMESPACE            NAME                     REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+analytics-service    analytics-service-hpa    Deployment/analytics-service    cpu: 2%/30%   1         5         1          5h26m
+evaluation-service   evaluation-service-hpa   Deployment/evaluation-service   cpu: 1%/30%   1         5         1          5h26m
+NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+evaluation-service   1/1     1            1           5h26m
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+analytics-service   1/1     1            1           5h26m
+
+Criando 2 pods temporarios de carga por ate 240 segundos...
+
+=== DURANTE A CARGA - LINHA DO TEMPO ===
+00:59:43 tentativa=1 evaluation cpu=1% atual=1 desejada=1 | analytics cpu=1% atual=1 desejada=1
+00:59:57 tentativa=2 evaluation cpu=59% atual=1 desejada=2 | analytics cpu=2% atual=1 desejada=1
+
+HPA solicitou multiplas replicas. Aguardando o Deployment estabilizar...
+deployment "evaluation-service" successfully rolled out
+
+=== SNAPSHOT DO SCALE-OUT ===
+NAMESPACE            NAME                     REFERENCE                       TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+analytics-service    analytics-service-hpa    Deployment/analytics-service    cpu: 2%/30%     1         5         1          5h27m
+evaluation-service   evaluation-service-hpa   Deployment/evaluation-service   cpu: 172%/30%   1         5         2          5h27m
+NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+evaluation-service   2/5     5            2           5h27m
+NAME                                  READY   STATUS    RESTARTS   AGE
+evaluation-service-65f4f758fc-cl5dk   0/1     Running   0          3s
+evaluation-service-65f4f758fc-fv9tk   1/1     Running   0          173m
+evaluation-service-65f4f758fc-jwnb8   1/1     Running   0          18s
+evaluation-service-65f4f758fc-kqnbj   0/1     Running   0          3s
+evaluation-service-65f4f758fc-nwwhq   0/1     Running   0          3s
+NAME                                READY   STATUS    RESTARTS   AGE
+analytics-service-86996c7c6-5ml5d   1/1     Running   0          158m
+
+Carga encerrada. Aguardando o retorno ao minimo...
+01:00:26 scale-down tentativa=1 HPA atual=5 desejada=5 deployment=5
+01:00:44 scale-down tentativa=2 HPA atual=5 desejada=5 deployment=5
+01:01:02 scale-down tentativa=3 HPA atual=5 desejada=5 deployment=5
+01:01:20 scale-down tentativa=4 HPA atual=5 desejada=5 deployment=5
+01:01:38 scale-down tentativa=5 HPA atual=5 desejada=5 deployment=5
+01:01:56 scale-down tentativa=6 HPA atual=5 desejada=5 deployment=5
+01:02:14 scale-down tentativa=7 HPA atual=5 desejada=1 deployment=1
+01:02:31 scale-down tentativa=8 HPA atual=1 desejada=1 deployment=1
+
+=== DEPOIS DA CARGA ===
+NAMESPACE            NAME                     REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+analytics-service    analytics-service-hpa    Deployment/analytics-service    cpu: 1%/30%   1         5         1          5h29m
+evaluation-service   evaluation-service-hpa   Deployment/evaluation-service   cpu: 1%/30%   1         5         1          5h29m
+NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+evaluation-service   1/1     1            1           5h29m
+NAME                                  READY   STATUS    RESTARTS   AGE
+evaluation-service-65f4f758fc-fv9tk   1/1     Running   0          176m
+
+RESULTADO: scale-out=True; maxEvaluation=2; maxAnalytics=1; retornoAoMinimo=True
+Nenhuma senha, token, MASTER_KEY ou API key foi exibida.
