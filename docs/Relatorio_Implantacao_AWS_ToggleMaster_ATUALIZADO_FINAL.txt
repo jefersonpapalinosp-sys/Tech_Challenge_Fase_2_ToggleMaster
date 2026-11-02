@@ -8,11 +8,11 @@ Ambiente acadêmico AWS Academy — LAB 2. Conta 533267349027, região us-east-1
 Equipe
 
 Integrante | RM | Discord
-Afonso Victoriano Franco | RM373563 | [PREENCHER]
-Cesar Augusto Ferreira Alves | [PREENCHER] | [PREENCHER]
-Jeferson Lima Papalino | RM376680 | [PREENCHER]
-Jonatas Ariel Nunes | RM376145 | [PREENCHER]
-Willian Felix Corrêa | RM372688 | [PREENCHER]
+Afonso Victoriano Franco | RM373563 | afonso3254
+Cesar Augusto Ferreira Alves | [PREENCHER] | cesarf__
+Jeferson Lima Papalino | RM376680 | jefersonpapalino
+Jonatas Ariel Nunes | RM376145 | eusoujoe
+Willian Felix Corrêa | RM372688 | will1an2522
 
 Links de entrega
 
@@ -26,7 +26,7 @@ Duração do vídeo exportado: 18:19
 
 O vídeo editado foi conferido em 02/11/2026, por quadros de cada trecho e transcrição do áudio. O link será acrescentado após a publicação.
 
-Os RMs de quatro integrantes foram informados pela equipe. Faltam o RM de Cesar Augusto Ferreira Alves, os usuários do Discord e o link do vídeo; preencher antes do envio à FIAP.
+Os RMs de quatro integrantes e os usernames do Discord dos cinco foram informados pela equipe. Faltam o RM de Cesar Augusto Ferreira Alves e o link do vídeo; preencher antes do envio à FIAP.
 
 Referência e escopo
 
@@ -339,7 +339,7 @@ Envio manual de SQS | Executado na gravação de 02/11: 6000 mensagens aceitas, 
 Persistência DynamoDB | Scan com quatro itens de load-postman-fiap em 30/10 e 6000 eventos do RunId em 02/11.
 Arquitetura e decisões (p. 9) | Seção 1: propósitos de RDS, ElastiCache e DynamoDB. Seção 6: implementação do HPA analytics e justificativa da escolha frente ao KEDA.
 Vídeo até 20 minutos | Arquivo editado com 18:19, conferido em 02/11; link a preencher após a publicação.
-Identificação dos integrantes | Cinco nomes e quatro RMs informados; faltam o RM de Cesar e os usuários do Discord.
+Identificação dos integrantes | Cinco nomes, quatro RMs e cinco usernames do Discord informados; falta o RM de Cesar.
 
 Limites da conclusão
 
@@ -408,7 +408,7 @@ A pasta apresentacao/entrega_final contém o relatório em Word, PDF e TXT, as e
 Preencher antes de enviar
 
 Campo | Situação
-RM e Discord | Faltam o RM de Cesar Augusto Ferreira Alves e o Discord dos cinco integrantes.
+RM e Discord | Falta o RM de Cesar Augusto Ferreira Alves; o Discord dos cinco está preenchido.
 Link do vídeo | A inserir após publicação; validar acesso pelo avaliador.
 Duração final | 18:19 no arquivo conferido em 02/11; atualizar se o vídeo for editado de novo.
 Conteúdo demonstrado | Conferido em 02/11: envio manual SQS, escala do analytics e eventos do lote no DynamoDB.

@@ -26,6 +26,13 @@ RMS = {
     'Jonatas Ariel Nunes': 'RM376145',
     'Willian Felix Corrêa': 'RM372688',
 }
+DISCORD = {
+    'Afonso Victoriano Franco': 'afonso3254',
+    'Cesar Augusto Ferreira Alves': 'cesarf__',
+    'Jeferson Lima Papalino': 'jefersonpapalino',
+    'Jonatas Ariel Nunes': 'eusoujoe',
+    'Willian Felix Corrêa': 'will1an2522',
+}
 
 def p(text): return ('p', text)
 def note(text): return ('note', text)
@@ -40,7 +47,7 @@ PAGES = [
     p('Ambiente acadêmico AWS Academy — LAB 2. Conta 533267349027, região us-east-1. '
       'Este relatório descreve a implantação, as decisões técnicas e os resultados registrados nas evidências do projeto.'),
     h('Equipe'),
-    table(['Integrante', 'RM', 'Discord'], [[name, RMS.get(name, '[PREENCHER]'), '[PREENCHER]'] for name in NAMES]),
+    table(['Integrante', 'RM', 'Discord'], [[name, RMS.get(name, '[PREENCHER]'), DISCORD[name]] for name in NAMES]),
     h('Links de entrega'),
     link('Repositório do projeto', REPO),
     link('Código da Fase 2', REPO_CODE),
@@ -48,8 +55,8 @@ PAGES = [
     p('Duração do vídeo exportado: 18:19'),
     p('O vídeo editado foi conferido em 02/11/2026, por quadros de cada trecho e transcrição do áudio. '
       'O link será acrescentado após a publicação.'),
-    note('Os RMs de quatro integrantes foram informados pela equipe. Faltam o RM de Cesar Augusto Ferreira '
-         'Alves, os usuários do Discord e o link do vídeo; preencher antes do envio à FIAP.'),
+    note('Os RMs de quatro integrantes e os usernames do Discord dos cinco foram informados pela equipe. '
+         'Faltam o RM de Cesar Augusto Ferreira Alves e o link do vídeo; preencher antes do envio à FIAP.'),
     h('Referência e escopo'),
     p('Enunciado: POSTECH - Tech Challenge - Fase 2, 11 páginas, disponível em docs. '
       'A organização segue os cinco requisitos técnicos e os entregáveis das páginas 9–10.'),
@@ -339,7 +346,7 @@ PAGES = [
         ['Persistência DynamoDB', 'Scan com quatro itens de load-postman-fiap em 30/10 e 6000 eventos do RunId em 02/11.'],
         ['Arquitetura e decisões (p. 9)', 'Seção 1: propósitos de RDS, ElastiCache e DynamoDB. Seção 6: implementação do HPA analytics e justificativa da escolha frente ao KEDA.'],
         ['Vídeo até 20 minutos', 'Arquivo editado com 18:19, conferido em 02/11; link a preencher após a publicação.'],
-        ['Identificação dos integrantes', 'Cinco nomes e quatro RMs informados; faltam o RM de Cesar e os usuários do Discord.'],
+        ['Identificação dos integrantes', 'Cinco nomes, quatro RMs e cinco usernames do Discord informados; falta o RM de Cesar.'],
     ]),
     h('Limites da conclusão'),
     p('O relatório consolida a implementação e a evidência disponível. Não declara atendimento integral '
@@ -391,7 +398,7 @@ PAGES = [
       'formal prevista no enunciado; o PDF deve ser exportado novamente se o Word for alterado.'),
     h('Preencher antes de enviar'),
     table(['Campo', 'Situação'], [
-        ['RM e Discord', 'Faltam o RM de Cesar Augusto Ferreira Alves e o Discord dos cinco integrantes.'],
+        ['RM e Discord', 'Falta o RM de Cesar Augusto Ferreira Alves; o Discord dos cinco está preenchido.'],
         ['Link do vídeo', 'A inserir após publicação; validar acesso pelo avaliador.'],
         ['Duração final', '18:19 no arquivo conferido em 02/11; atualizar se o vídeo for editado de novo.'],
         ['Conteúdo demonstrado', 'Conferido em 02/11: envio manual SQS, escala do analytics e eventos do lote no DynamoDB.'],
@@ -544,7 +551,7 @@ def build_docx(destination):
     doc.core_properties.title = 'ToggleMaster — Relatório final de implantação AWS — LAB 2'
     doc.core_properties.subject = 'Tech Challenge Fase 2 — implantação e evidências datadas'
     doc.core_properties.author = '; '.join(NAMES)
-    doc.core_properties.comments = 'Revisão 02/11/2026. RM de Cesar, Discord e link do vídeo a preencher.'
+    doc.core_properties.comments = 'Revisão 02/11/2026. RM de Cesar e link do vídeo a preencher.'
     doc.save(destination)
 
 
@@ -602,7 +609,7 @@ A pasta evidencias contém 13 saídas datadas de AWS CLI/kubectl e o ensaio 14, 
 gravação. Nenhum desses arquivos contém credenciais.
 
 ANTES DE ENVIAR
-1. Preencher o RM de Cesar e o Discord dos cinco integrantes na capa do Word.
+1. Preencher o RM de Cesar na capa do Word.
 2. Inserir o link do vídeo. Duração conferida: 18:19; atualizar se o vídeo for editado de novo.
 3. Conferir acesso ao vídeo e ao repositório pelo avaliador.
 4. Conteúdo do vídeo conferido em 02/11: envio manual SQS, escala de analytics e persistência.

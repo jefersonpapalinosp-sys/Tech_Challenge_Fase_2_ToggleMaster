@@ -11,13 +11,13 @@
 
 | Integrante | RM | Discord |
 |---|---|---|
-| Afonso Victoriano Franco | RM373563 | **PENDENTE — informar Discord** |
-| Cesar Augusto Ferreira Alves | **PENDENTE — informar RM** | **PENDENTE — informar Discord** |
-| Jeferson Lima Papalino | RM376680 | **PENDENTE — informar Discord** |
-| Jonatas Ariel Nunes | RM376145 | **PENDENTE — informar Discord** |
-| Willian Felix Corrêa | RM372688 | **PENDENTE — informar Discord** |
+| Afonso Victoriano Franco | RM373563 | afonso3254 |
+| Cesar Augusto Ferreira Alves | **PENDENTE — informar RM** | cesarf__ |
+| Jeferson Lima Papalino | RM376680 | jefersonpapalino |
+| Jonatas Ariel Nunes | RM376145 | eusoujoe |
+| Willian Felix Corrêa | RM372688 | will1an2522 |
 
-> O repositório definitivo já foi inserido. Os RMs de quatro integrantes foram informados pela equipe. Faltam o RM de Cesar Augusto Ferreira Alves, os usuários do Discord e o link do vídeo final.
+> O repositório definitivo já foi inserido. Os RMs e os usernames do Discord foram informados pela equipe. Faltam o RM de Cesar Augusto Ferreira Alves e o link do vídeo final.
 
 ## 1. Introdução
 
@@ -682,7 +682,7 @@ Como próximos passos, a arquitetura deve evoluir em identidade por workload, HT
 
 ### Checklist antes do envio
 
-- [ ] preencher o RM de Cesar e o Discord de todos os integrantes (RMs dos demais preenchidos);
+- [ ] preencher o RM de Cesar (RMs dos demais e Discord dos cinco preenchidos);
 - [x] inserir o link definitivo do repositório;
 - [ ] inserir o link público ou compartilhado do vídeo da Fase 2;
 - [x] confirmar o Managed Node Group `tgmnodegroup`, o tipo `t3.medium` e a escala 1/2/4 (evidência 02);
