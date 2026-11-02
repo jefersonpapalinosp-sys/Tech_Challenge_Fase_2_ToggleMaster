@@ -81,19 +81,23 @@ O cliente cria ou utiliza uma chave no auth-service. As definições das flags f
 | Cinco Dockerfiles | Um Dockerfile multi-stage por microsserviço | Atendido |
 | Nove containers locais | Cinco aplicações, dois PostgreSQL, um Redis e um LocalStack | Atendido por equivalência funcional |
 | DynamoDB local | DynamoDB emulado pelo LocalStack, junto com SQS | Atendido por equivalência funcional |
-| Cluster Kubernetes | Kind no ambiente local e EKS no AWS Academy | Registro AWS de 29/10/2026 — captura bruta pendente |
-| Cinco repositórios ECR | Um repositório privado por serviço | Registro AWS de 29/10/2026 — captura bruta pendente |
-| Três bancos RDS | Auth, Flag e Targeting em instâncias independentes | Registro AWS de 29/10/2026 — captura bruta pendente |
-| ElastiCache Redis | Redis Cluster com TLS para o evaluation-service | Registro AWS de 29/10/2026 — captura bruta pendente |
-| DynamoDB | Tabela ToggleMasterAnalytics | Registro AWS de 29/10/2026 — captura bruta pendente |
-| SQS Standard | Fila evaluation-analytics-queue | Registro AWS de 29/10/2026 — captura bruta pendente |
+| Cluster Kubernetes | Kind no ambiente local e EKS ekstogglemaster no AWS Academy (evidência 02) | Atendido |
+| Cinco repositórios ECR | Um repositório privado por serviço (evidência 03) | Atendido |
+| Três bancos RDS | Auth, Flag e Targeting em instâncias independentes (evidência 04) | Atendido |
+| ElastiCache Redis | Redis Cluster com TLS para o evaluation-service (evidência 05) | Atendido |
+| DynamoDB | Tabela ToggleMasterAnalytics (evidência 07) | Atendido |
+| SQS Standard | Fila tgmqueue (evidência 06) | Atendido |
 | Metrics Server | Instalado para fornecer métricas aos HPAs | Atendido |
-| Nginx Ingress | ingress-nginx publicado por NLB | Registro AWS de 29/10/2026 — captura bruta pendente |
+| Nginx Ingress | ingress-nginx publicado por Classic Load Balancer (evidência 11) | Atendido |
 | Namespaces separados | auth, flag, targeting, evaluation e analytics | Atendido |
 | Requests, limits e probes | Definidos nos cinco Deployments | Atendido |
-| HPA do evaluation | CPU, mínimo 1 e máximo 5 réplicas | Configurado — demonstração de scale-out pendente |
-| HPA do analytics | CPU, mínimo 1 e máximo 5 réplicas | Configurado — demonstração de scale-out pendente |
-| Teste ponta a ponta | Registrado até SQS, Analytics e DynamoDB | Registro histórico — evidência bruta pendente |
+| HPA do evaluation | CPU, mínimo 1 e máximo 5 réplicas; escalou sob carga e voltou ao mínimo (evidência 13) | Atendido |
+| HPA do analytics | CPU, mínimo 1 e máximo 5 réplicas; escalou de 1 para 5 e voltou ao mínimo (evidência 14) | Atendido |
+| Teste ponta a ponta | Validado do Load Balancer até SQS, Analytics e DynamoDB (evidências 07 e 14 e vídeo) | Atendido |
+
+Os itens de AWS foram comprovados no LAB 2 (conta 533267349027, região us-east-1). As evidências 02 a 13 estão em docs/evidencias_aws_2026-10-30 e a evidência 14, em docs/evidencias_aws_2026-11-02. As seções seguintes mantêm o registro do LAB 1, de 29/10/2026, com outros nomes de recursos.
+
+No LAB 2, o Service do ingress-nginx criou um Classic Load Balancer, enquanto o enunciado menciona ALB ou NLB. O roteamento e a chamada pelo Load Balancer foram comprovados; a diferença de produto permanece declarada.
 
 O enunciado menciona literalmente DynamoDB Local. Foi utilizado LocalStack porque ele oferece equivalência funcional para as APIs de DynamoDB e SQS em um único container, mantendo o total de nove containers e permitindo testar localmente o mesmo fluxo assíncrono usado na AWS.
 
